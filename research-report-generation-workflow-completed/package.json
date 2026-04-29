@@ -1,0 +1,17 @@
+{
+  "name": "research-report-generation-workflow-completed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Completed reference for the parallel research and multi-format report generation workshop exercise.",
+  "scripts": {
+    "build": "npm run build:docx && npm run build:pptx && npm run build:pdf && npm run build:xlsx",
+    "build:docx": "node build_docx.js",
+    "build:pptx": "node build_pptx.js",
+    "build:pdf": "python3 build_pdf.py",
+    "build:xlsx": "python3 build_xlsx.py"
+  },
+  "dependencies": {
+    "docx": "^9.6.1",
+    "pptxgenjs": "^4.0.1"
+  }
+}

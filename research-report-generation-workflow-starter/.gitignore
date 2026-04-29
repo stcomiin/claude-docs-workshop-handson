@@ -1,0 +1,10 @@
+# Workshop-generated outputs
+ocr_tech_scan.md
+ocr_tech_scan.docx
+ocr_tech_scan.pdf
+ocr_tech_scan.pptx
+ocr_tech_scan.xlsx
+
+# Local tooling, if attendees add scripts or install dependencies
+node_modules/
+.venv/

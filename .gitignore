@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Environments / secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Build artifacts
+unpacked/
+*.pdf
+!research-report-generation-workflow-completed/ocr_tech_scan.pdf
+page_*.png
