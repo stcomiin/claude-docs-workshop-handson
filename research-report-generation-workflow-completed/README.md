@@ -1,4 +1,4 @@
-# Research And Report Generation Workflow Completed Reference
+# Research and report generation workflow completed reference
 
 Completed reference for the workshop exercise:
 
@@ -54,7 +54,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-## Phase 1: Research With Parallel Agents
+## Phase 1: Research with parallel agents
 
 Use Claude Code to run the research phase. The important behavior is the workflow, not the exact OCR topic.
 
@@ -80,7 +80,7 @@ Save the report as ocr_tech_scan.md in this directory.
 
 Expected result: `ocr_tech_scan.md` should read like a useful 4-8 page technology scan, not a single-pass search summary.
 
-## Phase 2: Publish The Report
+## Phase 2: Publish the report
 
 Use the document skills to turn the markdown into native deliverables.
 
@@ -117,7 +117,7 @@ Spreadsheet:
 Using the xlsx skill, extract the comparison matrix from ocr_tech_scan.md into ocr_tech_scan.xlsx. Add a second worksheet that groups tools by category with pricing tier and best-fit use case.
 ```
 
-## Rebuild Locally
+## Rebuild locally
 
 The checked-in sample files can also be rebuilt with local scripts:
 
@@ -137,7 +137,7 @@ npm run build:xlsx
 
 The local builders are included so the sample is reproducible outside Claude Code. In the live workshop, the document-skills plugin is the primary path because it demonstrates skill-triggered file creation.
 
-## What To Review
+## What to review
 
 After generating the files, compare each output against `ocr_tech_scan.md`:
 
