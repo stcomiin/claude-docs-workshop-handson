@@ -1,4 +1,4 @@
-# Research And Report Generation Workflow Starter
+# Research and report generation workflow starter
 
 This is the starter workspace for the workshop exercise:
 
@@ -35,7 +35,7 @@ The topic is a 2026 technology scan of OCR tools, but the workflow applies to an
 - Web search enabled
 - This folder open as your working directory
 
-## Phase 1: Research With Parallel Agents
+## Phase 1: Research with parallel agents
 
 Copy the prompt from:
 
@@ -54,7 +54,7 @@ Expected behavior:
 
 Open `ocr_tech_scan.md` and skim it before moving on. The report should be useful as a draft technology scan, not just a short search summary.
 
-## Phase 2: Publish Deliverables
+## Phase 2: Publish deliverables
 
 Run these prompts in order:
 
