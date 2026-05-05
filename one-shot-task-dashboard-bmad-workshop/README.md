@@ -1,4 +1,4 @@
-# BMAD Existing Codebase Workshop
+# BMAD existing codebase workshop
 
 In this workshop, you will use the BMAD Method to understand an existing codebase before changing it.
 
@@ -11,7 +11,7 @@ You will work on this dashboard, a small OSINT monitoring app with:
 - scheduled collectors
 - Vitest tests
 
-## What You Will Build
+## What you will build
 
 You will add a **Test** action to each collector in the Settings screen.
 
@@ -19,13 +19,13 @@ When a user clicks **Test**, the UI should call the existing collector test API 
 
 This feature is a good workshop example because the backend route and frontend API helper already exist, but the UI does not expose them yet. Your job is to use BMAD to capture the existing project context, choose the right workflow depth, and implement the missing UI without changing the backend or database.
 
-## BMAD References
+## BMAD references
 
 This workshop follows the current BMAD guidance for established projects:
 
 - Install BMAD with `npx bmad-method install`.
-- Generate existing-project context with `bmad-generate-project-context`.
-- Use `bmad-quick-dev` for small, well-understood changes.
+- Generate existing-project context with `/bmad-generate-project-context`.
+- Use `/bmad-quick-dev` for small, well-understood changes.
 - Use the full workflow for larger changes: PRD, architecture, epics/stories, sprint planning, dev story, and code review.
 
 Official docs:
@@ -35,7 +35,9 @@ Official docs:
 - https://docs.bmad-method.org/reference/workflow-map/
 - https://docs.bmad-method.org/how-to/quick-fixes/
 
-## Shared Setup
+## Shared setup
+
+Use a bash shell. On Windows, that means Git Bash or WSL.
 
 Run all shell commands from this directory:
 
@@ -127,27 +129,27 @@ If your AI assistant was already running before BMAD was installed, restart or r
 If you are unsure what BMAD installed or what to run next, ask your AI assistant:
 
 ```text
-bmad-help
+/bmad-help
 ```
 
-## Choose A Path
+## Choose a path
 
 Use **Option A** for a 30-40 minute hands-on section.
 
 Use **Option B** for a longer session where you want to practice more of the BMAD phase lifecycle.
 
-## Option A: Shorter BMAD Quick Dev Task
+## Option A: shorter BMAD quick dev task
 
-This option uses `bmad-quick-dev` to clarify intent, create a bounded spec, implement, review, and present one small feature.
+This option uses `/bmad-quick-dev` to clarify intent, create a bounded spec, implement, review, and present one small feature.
 
 If you get stuck, use `reference/option-a-sample-run.md` as a troubleshooting reference. Do not open it first if you want the full exercise.
 
-### A1. Generate Project Context
+### A1. Generate project context
 
 Ask BMAD to inspect the existing app and create project context:
 
 ```text
-bmad-generate-project-context
+/bmad-generate-project-context
 ```
 
 Review the generated file:
@@ -164,9 +166,9 @@ Confirm it captured the important app facts:
 - SQLite setup lives under `server/db`
 - tests use Vitest
 
-### A2. Commit BMAD Setup And Context
+### A2. Commit BMAD setup and context
 
-`bmad-quick-dev` expects a clean working tree before it starts implementation. BMAD installation and project-context generation create files, so commit them before continuing:
+`/bmad-quick-dev` expects a clean working tree before it starts implementation. BMAD installation and project-context generation create files, so commit them before continuing:
 
 ```bash
 git status --short
@@ -180,7 +182,7 @@ git status --short
 
 If your installer created another tool-specific BMAD directory, add that directory before committing. You should see no changed files before running quick-dev.
 
-### A3. Find The Existing Implementation Path
+### A3. Find the existing implementation path
 
 Before asking for code changes, inspect the relevant files:
 
@@ -197,12 +199,12 @@ Confirm:
 - `src/components/settings/CollectorManager.tsx` renders collector rows
 - the UI does not yet expose a Test action
 
-### A4. Run Quick Dev
+### A4. Run quick dev
 
 Ask BMAD to implement the small feature:
 
 ```text
-bmad-quick-dev Add a Test action to each collector row in Settings. Reuse the existing api.testCollector(id) helper. Show pending state only for the clicked collector, then show the success or error message beside that collector. Do not add backend routes or database changes.
+/bmad-quick-dev Add a Test action to each collector row in Settings. Reuse the existing api.testCollector(id) helper. Show pending state only for the clicked collector, then show the success or error message beside that collector. Do not add backend routes or database changes.
 ```
 
 BMAD may ask clarifying questions or present a short spec. Keep the scope tight:
@@ -223,7 +225,7 @@ Run those prompts in separate AI sessions, or ask your facilitator whether to au
 
 If BMAD review finds edge-case issues, let BMAD apply the patch, rerun `npm test` and `npm run build`, and rerun review until there are no remaining findings.
 
-### A5. Inspect The Result
+### A5. Inspect the result
 
 Check the recent commits:
 
@@ -252,7 +254,7 @@ find _bmad-output -maxdepth 3 -type f | sort
 
 You should see implementation artifacts such as a quick-dev spec, summary, review notes, or deferred work depending on your BMAD version and selected modules.
 
-### A6. Verify The Feature
+### A6. Verify the feature
 
 Run:
 
@@ -288,23 +290,23 @@ Manual check:
 Review what BMAD helped you do:
 
 - Did `project-context.md` capture the existing codebase conventions?
-- Did `bmad-quick-dev` ask enough questions before implementing?
+- Did `/bmad-quick-dev` ask enough questions before implementing?
 - Did the generated spec stay within the requested scope?
 - Did BMAD defer unrelated findings instead of expanding the task?
 - Did tests and manual checks prove the feature works?
 
-## Option B: Longer BMAD Method Workflow
+## Option B: longer BMAD Method workflow
 
 This option uses more of the BMAD Method: project context, PRD, architecture, epics/stories, sprint planning, implementation, and review.
 
 For this workshop feature, the full workflow is intentionally more process than the change strictly needs. That is useful when the learning goal is to practice BMAD artifacts and handoffs.
 
-### B1. Generate Project Context
+### B1. Generate project context
 
 Ask BMAD to inspect the existing project:
 
 ```text
-bmad-generate-project-context
+/bmad-generate-project-context
 ```
 
 Review:
@@ -321,22 +323,22 @@ Before continuing, answer:
 - Where is collector scheduling handled?
 - What tests already exist?
 
-### B2. Ask BMAD For Workflow Guidance
+### B2. Ask BMAD for workflow guidance
 
 Ask BMAD what workflow depth it recommends:
 
 ```text
-bmad-help I have an existing React and Express dashboard. I want to expose an existing collector test endpoint in the Settings UI as a small workshop feature. Should I use quick-dev or the full BMAD Method?
+/bmad-help I have an existing React and Express dashboard. I want to expose an existing collector test endpoint in the Settings UI as a small workshop feature. Should I use quick-dev or the full BMAD Method?
 ```
 
-For this longer option, continue with the full method even if BMAD recommends `bmad-quick-dev`.
+For this longer option, continue with the full method even if BMAD recommends `/bmad-quick-dev`.
 
-### B3. Create A Focused PRD
+### B3. Create a focused PRD
 
 Ask BMAD to create a small PRD:
 
 ```text
-bmad-create-prd
+/bmad-create-prd
 ```
 
 Use this intent:
@@ -354,12 +356,12 @@ The PRD should include acceptance criteria like:
 - existing collector actions still work
 - `npm test` and `npm run build` pass
 
-### B4. Create A Lightweight Architecture
+### B4. Create a lightweight architecture
 
 Ask BMAD to create the architecture:
 
 ```text
-bmad-create-architecture
+/bmad-create-architecture
 ```
 
 Keep the solution constrained:
@@ -379,12 +381,12 @@ src/lib/api.ts
 server/routes/collectors.ts
 ```
 
-### B5. Create Epics And Stories
+### B5. Create epics and stories
 
 Ask BMAD to split the PRD into implementation work:
 
 ```text
-bmad-create-epics-and-stories
+/bmad-create-epics-and-stories
 ```
 
 For this workshop, one story is enough:
@@ -395,12 +397,12 @@ As an analyst configuring collectors, I want to test a collector from Settings s
 
 The story should not include backend route creation or database changes.
 
-### B6. Check Implementation Readiness
+### B6. Check implementation readiness
 
 Ask BMAD to check readiness:
 
 ```text
-bmad-check-implementation-readiness
+/bmad-check-implementation-readiness
 ```
 
 Resolve any blocker before coding. Acceptable concerns for this workshop:
@@ -409,12 +411,12 @@ Resolve any blocker before coding. Acceptable concerns for this workshop:
 - manual verification is required
 - backend test route is simple and already covered indirectly by route inspection
 
-### B7. Initialize Sprint Tracking
+### B7. Initialize sprint tracking
 
 Ask BMAD to initialize sprint status:
 
 ```text
-bmad-sprint-planning
+/bmad-sprint-planning
 ```
 
 Then check:
@@ -423,18 +425,18 @@ Then check:
 find _bmad-output -name 'sprint-status.yaml' -print
 ```
 
-### B8. Create And Implement The Story
+### B8. Create and implement the story
 
 Ask BMAD to prepare the next story:
 
 ```text
-bmad-create-story
+/bmad-create-story
 ```
 
 Then ask BMAD to implement it:
 
 ```text
-bmad-dev-story
+/bmad-dev-story
 ```
 
 The implementation should be small and centered on:
@@ -449,7 +451,7 @@ Check the changed files:
 git diff --stat
 ```
 
-### B9. Verify And Review
+### B9. Verify and review
 
 Run:
 
@@ -461,7 +463,7 @@ npm run build
 Then ask BMAD to review the change:
 
 ```text
-bmad-code-review
+/bmad-code-review
 ```
 
 If BMAD requests changes, apply them and rerun:

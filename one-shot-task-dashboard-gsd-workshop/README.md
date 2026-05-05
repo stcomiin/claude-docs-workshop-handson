@@ -1,4 +1,4 @@
-# GSD Existing Codebase Workshop
+# GSD existing codebase workshop
 
 In this workshop, you will use GSD to understand an existing codebase before changing it.
 
@@ -11,7 +11,7 @@ You will work on `one-shot-task-dashboard`, a small OSINT dashboard with:
 - scheduled collectors
 - Vitest tests
 
-## What You Will Build
+## What you will build
 
 You will add a **Test** action to each collector in the Settings screen.
 
@@ -19,7 +19,9 @@ When a user clicks **Test**, the UI should call the existing collector test API 
 
 This feature is a good workshop example because the backend route and frontend API helper already exist, but the UI does not expose them yet. Your job is to use GSD to find that path through the existing codebase before implementing the missing UI.
 
-## Shared Setup
+## Shared setup
+
+Use a bash shell. On Windows, that means Git Bash or WSL.
 
 Run all commands from this directory:
 
@@ -76,15 +78,15 @@ git status --short
 
 You should see no changed files before starting the GSD workflow.
 
-## Choose A Path
+## Choose a path
 
 Use **Option A** for a 20-25 minute hands-on section.
 
 Use **Option B** for a longer session where you want to practice the full GSD phase lifecycle.
 
-## Option A: Shorter GSD Quick Task
+## Option A: shorter GSD quick task
 
-This option uses `$gsd-quick` to plan, implement, summarize, and track one small feature without going through the full phase workflow.
+This option uses `/gsd-quick` to plan, implement, summarize, and track one small feature without going through the full phase workflow.
 
 For this option, the project must already have GSD project context. Check for it:
 
@@ -96,7 +98,7 @@ If you see `GSD project context found`, continue to Step A1.
 
 If `.planning/ROADMAP.md` does not exist, ask your facilitator whether this directory should already be pre-bootstrapped. If you are doing the exercise standalone, run the bootstrap steps in Option B through **Step B2**, then return here.
 
-### A1. Review The Existing Codebase Map
+### A1. Review the existing codebase map
 
 Check the codebase map:
 
@@ -130,12 +132,12 @@ Before running the quick task, confirm:
 - `src/lib/api.ts` has a collector test helper
 - `src/components/settings/CollectorManager.tsx` renders collector rows
 
-### A2. Run The Quick Task
+### A2. Run the quick task
 
 Ask GSD to implement the small feature:
 
 ```text
-$gsd-quick Add a Test action to each collector row in Settings. Reuse the existing api.testCollector(id) helper. Show pending state only for the clicked collector, then show the success or error message beside that collector. Do not add backend routes or database changes.
+/gsd-quick Add a Test action to each collector row in Settings. Reuse the existing api.testCollector(id) helper. Show pending state only for the clicked collector, then show the success or error message beside that collector. Do not add backend routes or database changes.
 ```
 
 You should see GSD create a quick task under:
@@ -146,7 +148,7 @@ You should see GSD create a quick task under:
 
 The quick task should create a plan, execute the code change, write a summary, update project state, and make one or more commits.
 
-### A3. Inspect The Result
+### A3. Inspect the result
 
 Check the recent commits:
 
@@ -176,7 +178,7 @@ find .planning/quick -maxdepth 2 -type f | sort
 
 You should see files such as a quick-task `PLAN.md` and `SUMMARY.md`.
 
-### A4. Verify The Feature
+### A4. Verify the feature
 
 Run:
 
@@ -210,20 +212,20 @@ Manual check:
 Review what GSD helped you do:
 
 - Which map file helped you find the right component?
-- Did `$gsd-quick` stay within the requested scope?
+- Did `/gsd-quick` stay within the requested scope?
 - What did `.planning/quick/` capture?
 - Did tests and manual checks prove the feature works?
 
-## Option B: Longer Full Phase Workflow
+## Option B: longer full phase workflow
 
 This option uses the full GSD flow: map, initialize, add a phase, spec, discuss, plan, execute, verify, and review.
 
-### B1. Map The Existing Codebase
+### B1. Map the existing codebase
 
 Ask GSD to inspect the app before planning any changes:
 
 ```text
-$gsd-map-codebase
+/gsd-map-codebase
 Focus on the app stack, server API, database schema, collector pipeline, frontend state, websocket flow, and test coverage.
 ```
 
@@ -259,12 +261,12 @@ Before continuing, open the generated map and answer:
 - Where is collector scheduling handled?
 - What tests already exist?
 
-### B2. Initialize GSD Project Context
+### B2. Initialize GSD project context
 
 Create project-level GSD context:
 
 ```text
-$gsd-new-project
+/gsd-new-project
 This is an existing OSINT dashboard used for a workshop. Use the codebase map as source context. Keep the first milestone focused on small, safe improvements that help participants learn the architecture.
 ```
 
@@ -290,12 +292,12 @@ sed -n '1,220p' .planning/ROADMAP.md
 
 You should see the current milestone and planned phases.
 
-### B3. Add The Workshop Phase
+### B3. Add the workshop phase
 
 Add the feature as a GSD phase:
 
 ```text
-$gsd-add-phase
+/gsd-add-phase
 Expose the existing collector test endpoint in the Settings UI. Each collector row should have a Test action. Clicking it should call api.testCollector(id), show pending state for that collector, and display either the success message or an error message near that collector.
 ```
 
@@ -309,12 +311,12 @@ sed -n '1,260p' .planning/ROADMAP.md
 
 Use that phase number in the next commands. The examples below use `<phase-number>` as a placeholder.
 
-### B4. Write The Phase Spec
+### B4. Write the phase spec
 
 Clarify what the feature must do:
 
 ```text
-$gsd-spec-phase <phase-number>
+/gsd-spec-phase <phase-number>
 ```
 
 Answer GSD's questions using this intent:
@@ -334,12 +336,12 @@ Check that the spec includes acceptance criteria like:
 - existing collector actions still work
 - `npm test` and `npm run build` pass
 
-### B5. Discuss Implementation Decisions
+### B5. Discuss implementation decisions
 
 Ask GSD to turn the spec into implementation decisions:
 
 ```text
-$gsd-discuss-phase <phase-number>
+/gsd-discuss-phase <phase-number>
 ```
 
 You should see GSD inspect the existing code and ask about any unclear implementation choices.
@@ -354,12 +356,12 @@ Keep the decisions small:
 
 You should see GSD write a context file in the phase directory, commonly named like `<phase-number>-CONTEXT.md`.
 
-### B6. Plan The Change
+### B6. Plan the change
 
 Ask GSD to create the implementation plan:
 
 ```text
-$gsd-plan-phase <phase-number>
+/gsd-plan-phase <phase-number>
 ```
 
 You should see GSD create a plan file in the phase directory.
@@ -374,12 +376,12 @@ server/routes/collectors.ts
 
 The plan should not require a new database table, migration, scheduler rewrite, or new backend endpoint.
 
-### B7. Execute The Plan
+### B7. Execute the plan
 
 Run the phase implementation:
 
 ```text
-$gsd-execute-phase <phase-number> --interactive
+/gsd-execute-phase <phase-number> --interactive
 ```
 
 You should see GSD make a small code change, usually centered on:
@@ -396,7 +398,7 @@ git diff --stat
 
 You should see a small diff for the collector test UI.
 
-### B8. Verify The Implementation
+### B8. Verify the implementation
 
 Run the automated checks:
 
@@ -425,12 +427,12 @@ Manual check:
 5. Confirm the row shows a success or error message after the request finishes.
 6. Confirm Enable, Edit, and Delete still work as before.
 
-### B9. Review The Change
+### B9. Review the change
 
 Ask GSD to review the files changed in this phase:
 
 ```text
-$gsd-code-review <phase-number> --depth=quick
+/gsd-code-review <phase-number> --depth=quick
 ```
 
 You should see GSD write a review artifact in the phase directory and summarize any findings.
@@ -438,7 +440,7 @@ You should see GSD write a review artifact in the phase directory and summarize 
 If GSD finds issues, fix them:
 
 ```text
-$gsd-code-review-fix <phase-number>
+/gsd-code-review-fix <phase-number>
 ```
 
 Then run verification again:
