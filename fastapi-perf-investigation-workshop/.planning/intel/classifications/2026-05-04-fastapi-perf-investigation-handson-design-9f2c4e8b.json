@@ -1,0 +1,42 @@
+{
+  "source_path": "C:\\Users\\jerem\\Documents\\github\\claude-docs-workshop-handson\\docs\\superpowers\\specs\\2026-05-04-fastapi-perf-investigation-handson-design.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "FastAPI slow-endpoint investigation handson — design",
+  "summary": "Design spec for a backend-Python workshop exercise teaching agentic-coding investigation discipline via a deliberately slow FastAPI + Elasticsearch endpoint with three layered performance traps.",
+  "scope": [
+    "FastAPI workshop exercise",
+    "Elasticsearch backend",
+    "GET /dashboard/summary endpoint",
+    "Docker workshop image",
+    "ES index mappings and seed data",
+    "timing instrumentation",
+    "pytest correctness tests",
+    "bench.sh latency harness",
+    "Option A (~45 min) and Option B (~75 min) workshop arcs",
+    "pivot and falsification prompts",
+    "facilitator pre-flight runbook"
+  ],
+  "cross_refs": [
+    "claude-docs.devbionics.com/docs/skills-plugins-deep-dive/",
+    "fastapi-perf-investigation-workshop/README.md",
+    "docker/Dockerfile",
+    "docker/docker-compose.yml",
+    "docker/seed/mappings.json",
+    "docker/seed/build_seed.py",
+    "app/main.py",
+    "app/es.py",
+    "app/timing.py",
+    "app/routes/dashboard.py",
+    "tests/test_dashboard.py",
+    "tests/bench.sh",
+    "reference/option-a-sample-run.md",
+    "pyproject.toml",
+    "one-shot-task-dashboard-bmad-workshop/",
+    "one-shot-task-dashboard-gsd-workshop/"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}
