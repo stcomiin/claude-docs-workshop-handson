@@ -130,6 +130,23 @@ Active to monitor during execution:
   Current Position, Risks), `REQUIREMENTS.md` (traceability table), `PROJECT.md`
   (Current Focus phase summary line). `intel/*` and `INGEST-CONFLICTS.md`
   unchanged — constraints and conflicts are upstream of phasing.
+- After tracer-bullet refactor, ran a Codex review against the PR. Codex
+  flagged three substantive technical errors in the SPEC's trap definitions:
+  (a) `username` as `{"type": "text"}` would *fail* with `fielddata is disabled`
+  rather than be slow, breaking the "endpoint is slow but correct" premise;
+  (b) `username.keyword` doesn't exist if `username` is only `text`, so the
+  Phase 3 "no re-index" fix path dead-ends; (c) ES request-cache eligibility
+  isn't determined by `query` vs `filter` alone — it depends on the whole
+  search shape (`size: 0`, deterministic body, no relative `now`), so trap #3
+  as written would be unreliable. Fixed at the SPEC source and propagated
+  through `intel/constraints.md`, `intel/requirements.md`, `PROJECT.md`,
+  `REQUIREMENTS.md`, and `ROADMAP.md`. Trap #2 now uses a multi-field mapping
+  (`text + fielddata: true` with a `keyword` subfield) so the agg is slow but
+  runs and the no-reindex fix path is real. Trap #3 is now framed as two
+  coupled defects (`query` context + millisecond-precise `now-30d`); the fix
+  moves to `filter` context AND rounds to `/d`. Commit message #3 updated
+  accordingly: `fix: move date range to filter context, round now to day for
+  cache hit`.
 
 ### Prior session
 
