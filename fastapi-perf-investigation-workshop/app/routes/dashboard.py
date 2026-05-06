@@ -10,6 +10,8 @@ from app.timing import timer
 
 
 INDEX_NAME = "activities"
+CANDIDATE_USER_LIMIT = 1000
+RESPONSE_USER_LIMIT = 10
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -190,12 +192,13 @@ def get_dashboard_summary() -> DashboardSummary:
     es = cast(ActivitiesEsClient, get_es_client())
 
     with timer("load_top_users"):
-        users = list_top_users(es)
+        users = list_top_users(es, limit=CANDIDATE_USER_LIMIT)
 
     with timer("count_per_user"):
         for user in users:
             user["activity_count_30d"] = count_user_activities(es, user["user_id"])
         users.sort(key=lambda user: user["activity_count_30d"], reverse=True)
+        users = users[:RESPONSE_USER_LIMIT]
 
     with timer("compute_org_summary"):
         org_summary = compute_org_summary(es)
