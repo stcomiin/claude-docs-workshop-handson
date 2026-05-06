@@ -1,0 +1,19 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "refresh_interval": "30s"
+  },
+  "mappings": {
+    "properties": {
+      "activity_id": {"type": "keyword"},
+      "user_id": {"type": "keyword"},
+      "username": {"type": "keyword"},
+      "org_id": {"type": "keyword"},
+      "activity_type": {"type": "keyword"},
+      "created_at": {"type": "date"},
+      "duration_ms": {"type": "long"},
+      "value": {"type": "double"}
+    }
+  }
+}
