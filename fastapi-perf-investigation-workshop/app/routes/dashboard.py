@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Protocol, TypedDict, cast
+from typing import Any, Protocol, cast
 
 from fastapi import APIRouter
+from typing_extensions import TypedDict
 
 from app.es import get_es_client
 from app.timing import timer
