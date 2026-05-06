@@ -67,7 +67,16 @@ artifact, not a participant-distributed artifact.
   7. After applying the N+1 fix in the tracer walkthrough, `pytest` / `ruff` / `mypy` stay green and `bench.sh` shows measurable improvement.
   8. No `CLAUDE.md` / `AGENTS.md` is shipped (`CON-no-claude-md-shipped`). Nothing in code or README drills into out-of-scope topics from `CON-out-of-scope` (async/await, cluster ops, reindex strategies, prod deploy, frontend, auth, vector / ML / ESQL).
 
-**Plans**: TBD.
+**Plans**:
+
+**Wave 1**
+
+- [ ] `01-01` — Docker ES image, Compose runtime, keyword mapping, and 50k deterministic seed pipeline.
+- [ ] `01-02` — FastAPI app, `/dashboard/summary`, three timer blocks, trap #1 only, and four correctness tests.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] `01-03` — bench harness, README tracer walkthrough, reference stub, and ignore rules.
 
 ---
 
@@ -156,7 +165,7 @@ artifact, not a participant-distributed artifact.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Tracer Slice — Workshop Motion End-to-End | 0/0 | Not started | - |
+| 1. Tracer Slice — Workshop Motion End-to-End | 0/3 | Planned | - |
 | 2. Option A Complete Vertical | 0/0 | Not started | - |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
