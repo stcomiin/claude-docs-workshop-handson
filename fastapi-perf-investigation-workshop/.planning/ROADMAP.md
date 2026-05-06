@@ -72,7 +72,7 @@ artifact, not a participant-distributed artifact.
 **Wave 1**
 
 - [x] `01-01` — Docker ES image, Compose runtime, keyword mapping, and 50k deterministic seed pipeline.
-- [ ] `01-02` — FastAPI app, `/dashboard/summary`, three timer blocks, trap #1 only, and four correctness tests.
+- [x] `01-02` — FastAPI app, `/dashboard/summary`, three timer blocks, trap #1 only, and four correctness tests.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -165,7 +165,7 @@ artifact, not a participant-distributed artifact.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Tracer Slice — Workshop Motion End-to-End | 1/3 | Executing | - |
+| 1. Tracer Slice — Workshop Motion End-to-End | 2/3 | Executing | - |
 | 2. Option A Complete Vertical | 0/0 | Not started | - |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
