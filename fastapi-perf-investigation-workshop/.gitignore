@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+
+.venv/
+venv/
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.env
+.env.*
+
+docker/seed/documents.ndjson
+
+.DS_Store
