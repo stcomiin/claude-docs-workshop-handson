@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T18:01:23.000Z"
+last_updated: "2026-05-06T18:05:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 2
-  percent: 67
+  completed_plans: 3
+  percent: 100
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -48,17 +48,17 @@ Roadmap restructured from horizontal layering (docker → app → tests → docs
 preflight) to **tracer-bullet vertical slices** (motion → Option A → Option B
 trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 execution
 is underway; the Docker/seed runtime and FastAPI endpoint/test plans are
-complete and verified live.
+complete; phase-level verification is in progress.
 
 ## Current Position
 
 - **Phase:** 1 — Tracer Slice — Workshop Motion End-to-End
-- **Plan:** 2 of 3 complete
-- **Status:** Executing Phase 1
-- **Progress:** `[#######   ]` 67% (2 of 3 Phase 1 plans complete)
+- **Plan:** 3 of 3 complete
+- **Status:** Verifying Phase 1
+- **Progress:** `[##########]` 100% (3 of 3 Phase 1 plans complete)
 
 ```
-Phase 1: Tracer Slice — Workshop Motion End-to-End            [#######   ] Executing (2/3 plans)
+Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Verifying (3/3 plans)
 Phase 2: Option A Complete Vertical                           [          ] Not started
 Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
@@ -71,14 +71,14 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > from process artifacts.
 
 - **Phases complete:** 0 / 5
-- **Plans complete:** 2 / 3
+- **Plans complete:** 3 / 3
 - **v1 requirements satisfied:** 0 / 7
 - **Verification gates passing in deliverable:** partial
   - `docker compose -f docker/docker-compose.yml config`: passing
   - live Docker seed smoke: passing (`activities/_count` returned 50000)
   - live `GET /dashboard/summary`: passing with exactly three timer lines
   - `pytest`: passing (4 tests)
-  - `bash tests/bench.sh`: not yet runnable
+  - `bash tests/bench.sh`: passing
   - `ruff check app`: passing
   - `mypy app`: passing
 - **Facilitator pre-flight status:** not yet attempted (Phase 5)

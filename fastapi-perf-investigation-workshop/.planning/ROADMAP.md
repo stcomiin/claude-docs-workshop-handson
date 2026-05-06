@@ -76,7 +76,7 @@ artifact, not a participant-distributed artifact.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] `01-03` — bench harness, README tracer walkthrough, reference stub, and ignore rules.
+- [x] `01-03` — bench harness, README tracer walkthrough, reference stub, and ignore rules.
 
 ---
 
@@ -165,7 +165,7 @@ artifact, not a participant-distributed artifact.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Tracer Slice — Workshop Motion End-to-End | 2/3 | Executing | - |
+| 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Verifying | - |
 | 2. Option A Complete Vertical | 0/0 | Not started | - |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
