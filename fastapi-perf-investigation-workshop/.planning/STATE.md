@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
+status: planning
 last_updated: "2026-05-06T18:05:00.000Z"
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
   completed_plans: 3
-  percent: 100
+  percent: 20
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -46,19 +46,19 @@ progress:
 
 Roadmap restructured from horizontal layering (docker → app → tests → docs →
 preflight) to **tracer-bullet vertical slices** (motion → Option A → Option B
-trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 execution
-is underway; the Docker/seed runtime and FastAPI endpoint/test plans are
-complete; phase-level verification is in progress.
+trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 is
+complete and verified. Next up is Phase 2 planning for the complete Option A
+vertical slice.
 
 ## Current Position
 
-- **Phase:** 1 — Tracer Slice — Workshop Motion End-to-End
-- **Plan:** 3 of 3 complete
-- **Status:** Verifying Phase 1
-- **Progress:** `[##########]` 100% (3 of 3 Phase 1 plans complete)
+- **Phase:** 2 — Option A Complete Vertical
+- **Plan:** 0 of 0 (not planned)
+- **Status:** Ready to plan Phase 2
+- **Progress:** `[##        ]` 20% (1 of 5 phases complete)
 
 ```
-Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Verifying (3/3 plans)
+Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
 Phase 2: Option A Complete Vertical                           [          ] Not started
 Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
@@ -70,10 +70,10 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > Updated as phases complete. Metrics are observable from the deliverable, not
 > from process artifacts.
 
-- **Phases complete:** 0 / 5
+- **Phases complete:** 1 / 5
 - **Plans complete:** 3 / 3
-- **v1 requirements satisfied:** 0 / 7
-- **Verification gates passing in deliverable:** partial
+- **v1 requirements satisfied:** 2 / 7
+- **Verification gates passing in deliverable:** Phase 1 gates passing
   - `docker compose -f docker/docker-compose.yml config`: passing
   - live Docker seed smoke: passing (`activities/_count` returned 50000)
   - live `GET /dashboard/summary`: passing with exactly three timer lines
@@ -100,7 +100,7 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 
 ### Open Todos
 
-None — Phase 1 has 3 executable plans ready.
+None.
 
 ### Blockers
 
@@ -110,7 +110,7 @@ None.
 
 mitigations registry")
 
-Active to monitor during execution:
+Active to monitor in later phases:
 
 - ES baseline variance across hardware → relative improvements are the binding
   measure; pre-flight calibration mandatory at Phase 5.
@@ -194,23 +194,11 @@ Active to monitor during execution:
 
 ### What happens next (next session)
 
-- Execute Phase 1: `/gsd-execute-phase 1` (Tracer Slice — Workshop Motion
-  End-to-End). The executor should run the three plans in two waves: `01-01`
-  Docker/seed and `01-02` FastAPI/tests can run first; `01-03` bench/README
-  docs depends on both.
+- Plan Phase 2: `/gsd-plan-phase 2 --auto` (Option A Complete Vertical).
 
-- The phase agent should bind on `CON-deliverable-directory-layout`,
-  `CON-docker-image-contract` (50k seed, semver tagging, registry push),
-  `CON-pre-instrumented-timing` (three timer blocks, parseable log format),
-  `CON-test-suite-shape` (4 pytest tests), `CON-bench-script` (3-run curl
-  loop), `CON-verification-commands` (pytest / bench.sh / ruff / mypy gates),
-  `CON-setup-prerequisites` (Docker, three terminals, ES_JAVA_OPTS, port
-  allocation, `--reload` caveat), `CON-no-claude-md-shipped`, and
-  `CON-out-of-scope`.
-
-- The phase agent should explicitly NOT introduce trap #2 (text-mapped
-  `username`) or trap #3 (`query`-context date filter) — those are Phase 2's
-  scope.
+- Phase 2 should preserve the Phase 1 tracer runtime and add the remaining
+  physical traps plus the full Option A arc, while keeping Option B narrative
+  details for later phases.
 
 ### Files to keep in working memory
 
