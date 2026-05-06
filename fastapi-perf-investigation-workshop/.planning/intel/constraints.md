@@ -95,9 +95,9 @@ Three layered, intentional causes of slowness MUST be present. The traps MUST be
 
 1. **N+1 search requests** *(visible from code reading).* `top_users` is built by calling `es.count(index="activities", body={"query": {"term": {"user_id": ...}}})` once per user, instead of a single `terms` aggregation. Claude is expected to identify this from code reading; that is acceptable because the pivot/falsification still apply on a known-positive case.
 
-2. **Aggregation on a `text`-mapped field** *(invisible from `dashboard.py`).* The endpoint runs a `terms` aggregation on `username`, but `docker/seed/mappings.json` MUST set `"username": {"type": "text"}` instead of `"keyword"`. This forces fielddata loading on every aggregation request. Diagnosis requires `_search?profile=true`, the slow log, or inspecting the mapping directly.
+2. **Aggregation on a `text`-mapped field** *(invisible from `dashboard.py`).* `docker/seed/mappings.json` MUST define `username` as a multi-field: `{"type": "text", "fielddata": true, "fields": {"keyword": {"type": "keyword"}}}`. The endpoint's `terms` aggregation MUST target the parent `username` (text + fielddata) path rather than the `username.keyword` subfield. The agg runs (because `fielddata: true` is set) but loads fielddata onto the JVM heap on every request — orders of magnitude slower than the keyword path. Diagnosis requires `_search?profile=true`, the slow log, or inspecting the mapping directly. Fix path: switch the aggregation to `username.keyword` (no re-index — the subfield is already in the multi-field). Without `fielddata: true`, the agg would fail with `fielddata is disabled on text fields` rather than be slow, breaking the "slow but correct" premise.
 
-3. **`query` context where `filter` should be used** *(invisible from any single file).* The 30-day date range filter for `unique_users_30d` MUST sit under `query` context (uncacheable, runs scoring), not `filter` context (cacheable, no scoring). Same JSON shape; different perf. Diagnosis requires running the same request twice and noticing the second isn't cached.
+3. **`query` context with non-rounded `now` date math** *(invisible from any single file — two coupled defects in one place).* The 30-day date range filter for `unique_users_30d` MUST sit under `query` context (`bool.must`) AND use millisecond-precise `now-30d` instead of day-rounded `now-30d/d`. Two coupled cache misses: (a) `query` context skips the segment-level filter cache and runs scoring; (b) millisecond-precise `now` produces a different filter bitset and a different request-body cache key on every request, so neither the filter cache nor the request cache is engaged. The aggs sub-request MUST use `size: 0` so the request cache is *eligible* once the body becomes deterministic (this is correct in the as-shipped code; the trap is purely about query context + non-rounded date). Diagnosis requires running the same request twice and noticing the second isn't faster. Fix path: move to `filter` context AND round to `/d` (`now-30d/d`). Either fix alone is insufficient.
 
 ---
 
@@ -280,8 +280,8 @@ Eight-step flow totaling ~45 min:
 Steps 1–8 from Option A unchanged. Adds:
 
 9. **10 min** — After fix #1, re-measure. Endpoint *still* slow — dominant cost shifted to `compute_org_summary`. Claude investigates using `_search?profile=true` or by enabling slow log. Profile reveals fielddata loading on `username`.
-10. **10 min** — Diagnose mapping bug: inspect `docker/seed/mappings.json`, find `"username": {"type": "text"}`. Implement fix #2: `username.keyword` subfield in aggregation (no re-index) or rebuild index with `keyword` mapping. Measure. Big drop.
-11. **8 min** — After fix #2, dominant cost is `query`-context date filter. Run same request twice — second isn't faster, request cache not engaged. Diagnose `must` block under `query` vs `filter`. Move date range to `filter`. Re-bench: second request now cached.
+10. **10 min** — Diagnose mapping bug: inspect `docker/seed/mappings.json`, find `username` mapped as `text` with `fielddata: true` (which is *why* the agg ran slowly instead of erroring) and the `username.keyword` subfield already exposed in the multi-field. Implement fix #2: switch the aggregation from `username` to `username.keyword`. No re-index needed. Measure. Big drop.
+11. **8 min** — After fix #2, dominant cost is `query`-context, non-rounded date filter. Run same request twice — second isn't faster, neither cache engaged. Diagnose two coupled defects: `must` under `query` context (no filter cache, scoring runs) AND `now-30d` (non-deterministic body, no request cache). Move the date range to `filter` context AND round to `/d` (`now-30d/d`). Re-bench: second request now cached.
 12. **4 min** — Final measurement. Document before/after in comment block at top of `dashboard.py`. Discuss Monday equivalents.
 
 Endpoint ends roughly 50–100x faster than as-shipped (less dramatic than SQLite numbers because ES has different baseline costs).
@@ -365,5 +365,5 @@ Option B adds two more commits:
 
 ```
 fix: aggregate on username.keyword to avoid fielddata on text field
-fix: move date range to filter context for request-cache hit
+fix: move date range to filter context, round now to day for cache hit
 ```

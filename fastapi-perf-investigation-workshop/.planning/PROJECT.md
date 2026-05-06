@@ -65,8 +65,13 @@ copies live there with full provenance back to the SPEC sections.
 - **Three layered, intentional perf traps** in `dashboard.py` and the seed
   mapping (`CON-three-layered-perf-traps`):
   1. N+1 `_count` requests per user (visible from code-reading)
-  2. Aggregation on a `text`-mapped `username` field (invisible from `dashboard.py`)
-  3. Date-range filter in `query` context where `filter` belongs (invisible)
+  2. Aggregation on the `text + fielddata: true` parent of a `username` multi-field
+     instead of its already-existing `.keyword` subfield (invisible from
+     `dashboard.py` — defect lives in the mapping; agg runs slowly rather than
+     erroring because `fielddata: true` is enabled)
+  3. Date-range filter under `query` context AND using non-rounded `now-30d`
+     date math (invisible — two coupled defects in one place; together they
+     prevent both filter-cache and request-cache hits)
   Two of three MUST NOT be diagnosable from code-reading alone — that's the
   pedagogical core.
 - **Pre-instrumented timing** via `with timer("name"):` context manager in
@@ -148,7 +153,7 @@ Option B adds:
 
 ```
 fix: aggregate on username.keyword to avoid fielddata on text field
-fix: move date range to filter context for request-cache hit
+fix: move date range to filter context, round now to day for cache hit
 ```
 
 ## Out of Scope (hard "do not implement" list)

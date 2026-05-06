@@ -75,7 +75,8 @@ fastapi-perf-investigation-workshop/
 │   ├── Dockerfile               # builds ES image with seed data + bad mapping
 │   ├── docker-compose.yml       # one-command ES startup (single-node)
 │   └── seed/
-│       ├── mappings.json        # intentionally bad mapping (text where keyword needed)
+│       ├── mappings.json        # intentionally bad mapping (agg targets text+fielddata path,
+│       │                                                      not the .keyword subfield)
 │       └── build_seed.py        # generates documents.ndjson at image build time
 ├── app/
 │   ├── __init__.py
@@ -137,9 +138,9 @@ The traps are deliberately tuned so two of three are *not* visible from reading 
 
 1. **N+1 search requests** *(visible from code reading)*. `top_users` is built by calling `es.count(index="activities", body={"query": {"term": {"user_id": ...}}})` once per user, instead of a single `terms` aggregation that returns all counts in one request. Claude will likely identify this from reading the code — that's fine. The pivot and falsification still apply, and the participant practices the discipline on a known-positive case.
 
-2. **Aggregation on a `text`-mapped field** *(invisible from `dashboard.py` — the bug lives in the mapping)*. The endpoint runs a `terms` aggregation on `username`, but the index mapping in `docker/seed/mappings.json` has `"username": {"type": "text"}` instead of `"keyword"`. This forces fielddata loading on every aggregation request — orders of magnitude slower than the keyword path. The aggregation request code looks identical regardless of mapping; reading `dashboard.py` reveals nothing. Diagnosis requires `_search?profile=true`, the slow log, or inspecting the mapping directly.
+2. **Aggregation on a `text`-mapped field** *(invisible from `dashboard.py` — the bug lives in the mapping)*. The index mapping in `docker/seed/mappings.json` defines `username` as a multi-field: `{"type": "text", "fielddata": true, "fields": {"keyword": {"type": "keyword"}}}`. The endpoint's `terms` aggregation targets the parent `username` (text path) instead of the `username.keyword` subfield. The aggregation **runs** because `fielddata: true` is enabled — but it forces in-memory fielddata loading onto the JVM heap on every request, orders of magnitude slower than the keyword path. The aggregation request code looks identical regardless of which field path is used; reading `dashboard.py` reveals nothing. Diagnosis requires `_search?profile=true`, the slow log, or inspecting the mapping directly. The fix is to switch the aggregation to `username.keyword` — no re-index needed, because the keyword subfield is already in the mapping. (Note: without `fielddata: true`, the aggregation would fail with the standard `fielddata is disabled on text fields` error rather than just be slow — that would break the "endpoint is slow but correct" premise.)
 
-3. **`query` context where `filter` should be used** *(invisible from any single file — same JSON shape, different semantics)*. The 30-day date range filter for `unique_users_30d` is in `query` context (uncacheable, runs scoring), not `filter` context (cacheable, no scoring). The same identical JSON shape produces dramatically different perf depending on which key it sits under. Code-reading sees a normal `bool.must` block. Diagnosis requires running the same request twice and noticing the second request *isn't* faster — the request cache isn't engaged.
+3. **`query` context combined with non-rounded `now` date math** *(invisible from any single file — two coupled defects in one place)*. The 30-day date range filter for `unique_users_30d` sits under `query` context (`bool.must`) **and** uses millisecond-precise `now-30d` instead of day-rounded `now-30d/d`. Two cache misses fall out of this combination: (a) `query` context skips the segment-level filter cache and runs scoring on every request; (b) millisecond-precise `now` produces a different filter bitset and a different request-body cache key on every request, so neither the filter cache nor the request cache is engaged. The aggs sub-request must be `size: 0` for the request cache to even be eligible (this is correct in the as-shipped code; the trap is purely about query-context + date math). Code-reading sees a normal `bool.must` block. Diagnosis requires running the same request twice and noticing the second isn't any faster. The fix moves the date range to `filter` context **and** rounds to `/d`, making both the filter bitset and the request body deterministic across requests within a day. Either fix alone is insufficient: filter context alone still has a non-deterministic body, and rounding alone still pays scoring cost on the date clause.
 
 The endpoint is **correct** — pytest tests pass against the seeded data. It's just slow.
 
@@ -251,8 +252,8 @@ Steps 1–8 from Option A unchanged.
 | # | Time | Action |
 |---|---|---|
 | 9 | 10 min | After fix #1, re-measure. The endpoint is *still* slow — the dominant cost shifted to `compute_org_summary` but didn't go away. Have Claude investigate using `_search?profile=true` or by enabling the slow log. The profile reveals fielddata loading on the username field. |
-| 10 | 10 min | Diagnose the mapping bug: inspect `docker/seed/mappings.json`, find `"username": {"type": "text"}`. Implement fix #2: either use `username.keyword` subfield in the aggregation (no re-index needed) or rebuild the index with `keyword` mapping. Measure. Big drop. |
-| 11 | 8 min | After fix #2, the dominant cost is now the `query`-context date filter. Run the same request twice — second isn't faster, so the request cache isn't engaged. Diagnose: `must` block under `query` context vs `filter` context. Move the date range to `filter`. Re-bench: second request is now cached. |
+| 10 | 10 min | Diagnose the mapping bug: inspect `docker/seed/mappings.json`, find that `username` is mapped as `text` with `fielddata: true` (which is *why* the agg ran slowly instead of erroring) and that the multi-field already exposes a `username.keyword` subfield. Implement fix #2: switch the aggregation from `username` to `username.keyword`. No re-index needed. Measure. Big drop. |
+| 11 | 8 min | After fix #2, the dominant cost is now the `query`-context, non-rounded date filter. Run the same request twice — second isn't faster, so neither cache is engaged. Diagnose two coupled defects: `must` block under `query` context (no filter cache, scoring runs) AND `now-30d` (non-deterministic body, no request cache). Move the date range to `filter` context **and** round to `/d` (`now-30d/d`). Re-bench: second request is now cached. |
 | 12 | 4 min | Final measurement. Document before/after in a comment block at the top of `dashboard.py`. Discuss what *Monday equivalent* of each fix looks like in the participant's real ES setup. |
 
 **Total: ~75 min.** Option B participant ends with an endpoint roughly 50–100x faster than as-shipped (less dramatic than the SQLite numbers because ES has different baseline costs), with three pieces of evidence that each fix did what was claimed — *and* with two of three fixes that they could not have found by reading the source alone.
@@ -344,7 +345,7 @@ Option B adds two more commits:
 
 ```
 fix: aggregate on username.keyword to avoid fielddata on text field
-fix: move date range to filter context for request-cache hit
+fix: move date range to filter context, round now to day for cache hit
 ```
 
 ## 17. Open questions

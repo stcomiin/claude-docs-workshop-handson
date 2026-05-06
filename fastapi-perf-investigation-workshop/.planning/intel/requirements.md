@@ -54,7 +54,7 @@ Each requirement traces back to its SPEC source. None have multiple competing ac
   - Three commits on participant's branch:
     - `fix: replace per-user _count loop with single terms aggregation`
     - `fix: aggregate on username.keyword to avoid fielddata on text field`
-    - `fix: move date range to filter context for request-cache hit`
+    - `fix: move date range to filter context, round now to day for cache hit`
   - Comment block at top of `dashboard.py` documents before/after for each fix
   - Participant has discussed Monday-equivalents (per Appendix B)
 - **Scope:** Option B end-state
