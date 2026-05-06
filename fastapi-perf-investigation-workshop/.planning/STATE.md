@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T17:47:35.261Z"
+last_updated: "2026-05-06T17:55:25.000Z"
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 33
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -46,18 +46,18 @@ progress:
 
 Roadmap restructured from horizontal layering (docker → app → tests → docs →
 preflight) to **tracer-bullet vertical slices** (motion → Option A → Option B
-trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 not yet
-started in code, but Phase 1 planning is complete and ready to execute.
+trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 execution
+is underway; the Docker/seed runtime plan is complete and verified live.
 
 ## Current Position
 
 - **Phase:** 1 — Tracer Slice — Workshop Motion End-to-End
-- **Plan:** 0 of 3 (plans ready)
-- **Status:** Ready to execute
-- **Progress:** `[          ]` 0% (0 of 3 Phase 1 plans complete)
+- **Plan:** 1 of 3 complete
+- **Status:** Executing Phase 1
+- **Progress:** `[###       ]` 33% (1 of 3 Phase 1 plans complete)
 
 ```
-Phase 1: Tracer Slice — Workshop Motion End-to-End            [          ] Ready to execute (0/3 plans)
+Phase 1: Tracer Slice — Workshop Motion End-to-End            [###       ] Executing (1/3 plans)
 Phase 2: Option A Complete Vertical                           [          ] Not started
 Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
@@ -70,9 +70,11 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > from process artifacts.
 
 - **Phases complete:** 0 / 5
-- **Plans complete:** 0 / 3
+- **Plans complete:** 1 / 3
 - **v1 requirements satisfied:** 0 / 7
-- **Verification gates passing in deliverable:** N/A (no code yet)
+- **Verification gates passing in deliverable:** partial
+  - `docker compose -f docker/docker-compose.yml config`: passing
+  - live Docker seed smoke: passing (`activities/_count` returned 50000)
   - `pytest`: not yet runnable
   - `bash tests/bench.sh`: not yet runnable
   - `ruff check app`: not yet runnable
