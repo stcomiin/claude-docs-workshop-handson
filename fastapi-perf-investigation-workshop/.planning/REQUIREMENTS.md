@@ -114,22 +114,25 @@
 
 ## Traceability
 
-Every v1 requirement maps to exactly one phase. See `ROADMAP.md` for phase
-goals and success criteria.
+Each v1 requirement is owned by the phase that **fully** satisfies its
+acceptance criteria. Some requirements are partially satisfied by earlier
+phases (the tracer-bullet shape means each phase delivers a thinner-but-runnable
+form of the workshop end-to-end). Partial-satisfaction phases are noted in the
+"Partially by" column. See `ROADMAP.md` for phase goals and success criteria.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| REQ-no-out-of-scope-drift | Phase 1 | Pending |
-| REQ-investigation-uses-instrumentation | Phase 2 | Pending |
-| REQ-correctness-preserved | Phase 3 | Pending |
-| REQ-investigation-discipline-takeaway | Phase 4 | Pending |
-| REQ-portable-prompt-artifacts | Phase 4 | Pending |
-| REQ-measured-fix-option-a | Phase 4 | Pending |
-| REQ-measured-fix-option-b | Phase 4 | Pending |
+| Requirement | Owned by | Partially by | Status |
+|-------------|----------|--------------|--------|
+| REQ-no-out-of-scope-drift | Phase 1 | (cross-cutting; maintained in 2/3/4) | Pending |
+| REQ-correctness-preserved | Phase 1 | (maintained in 2/3/4) | Pending |
+| REQ-measured-fix-option-a | Phase 2 | — | Pending |
+| REQ-investigation-discipline-takeaway | Phase 2 | (closing-slide restatement in Phase 4) | Pending |
+| REQ-investigation-uses-instrumentation | Phase 3 | Phase 2 (timer log read + finer-grained timers added) | Pending |
+| REQ-measured-fix-option-b | Phase 4 | Phase 3 (commits 1+2 path enabled) | Pending |
+| REQ-portable-prompt-artifacts | Phase 4 | Phase 1 (pivot prompt verbatim), Phase 2 (falsification prompt verbatim) | Pending |
 
 **Coverage:** 7/7 requirements mapped. No orphans. No duplicates.
 
-Phase 5 (pre-flight + reference doc) is a validation phase that gates
-end-to-end correctness across all prior phases; it does not own a single
-requirement directly but is structurally required by `CON-facilitator-preflight`
-and the developer-facing success metric.
+Phase 5 (dual-model pre-flight) is a validation phase that gates end-to-end
+correctness across all prior phases; it does not own a single requirement
+directly but is structurally required by `CON-facilitator-preflight` and the
+developer-facing success metric.
