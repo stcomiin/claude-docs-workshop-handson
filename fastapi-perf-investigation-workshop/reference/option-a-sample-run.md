@@ -118,3 +118,111 @@ use deeper instrumentation and must not be taught during Option A.
 - If the final benchmark improves so much that the endpoint looks fully fast on
   the local machine, still stop the path. Treat the absolute bands as
   calibration examples and preserve deeper investigation for the longer option.
+
+## Option B steps 9-10
+
+This extension starts after the participant has already made the expected
+Option A commit:
+
+```text
+fix: replace per-user _count loop with single terms aggregation
+```
+
+### Expected trap #2 investigation path
+
+The participant re-runs `bash tests/bench.sh`, reads the uvicorn timer output,
+and sees the dominant remaining cost shift to `compute_org_summary`. Claude
+must use `_search?profile=true` or the Elasticsearch slow log before the
+facilitator accepts the diagnosis.
+
+The expected path is:
+
+1. Profile or slow-log evidence points to the `username_distribution`
+   aggregation on `username`.
+2. Mapping inspection shows `username` is `text` with `fielddata: true`.
+3. The same mapping exposes an existing `username.keyword` subfield.
+4. Claude changes only the aggregation field from `username` to
+   `username.keyword`.
+5. The participant re-runs `pytest`, `ruff check app`, `mypy app`, restarts
+   uvicorn without `--reload`, and re-runs `bash tests/bench.sh`.
+
+No re-index is needed because the keyword subfield already exists in the seeded
+multi-field mapping.
+
+### Profile or slow-log evidence
+
+The profile path should use the same logical query as `compute_org_summary`,
+with `_search?profile=true` against `activities`. The slow-log path should set
+`index.search.slowlog.threshold.query.trace` and
+`index.search.slowlog.threshold.fetch.trace` to `0ms`, run the bench script,
+inspect `docker compose -f docker/docker-compose.yml logs es`, and reset both
+thresholds to `-1`.
+
+The facilitator should require quoted profile or slow-log evidence before
+accepting any proposed fix. Code-reading alone is not enough for trap #2.
+
+### Mapping inspection
+
+The expected mapping evidence is:
+
+```json
+"username": {
+  "type": "text",
+  "fielddata": true,
+  "fields": {
+    "keyword": {"type": "keyword"}
+  }
+}
+```
+
+The important connection is that the aggregation on parent `username` loads
+fielddata, while `username.keyword` is already available for the exact-value
+terms aggregation.
+
+### Expected Option B commit 2
+
+The participant should make one narrow second commit:
+
+```text
+fix: aggregate on username.keyword to avoid fielddata on text field
+```
+
+The change target is the `username_distribution` aggregation field in
+`app/routes/dashboard.py`. Keep the participant to the single aggregation-field change. Do not allow broad Elasticsearch tuning, framework
+rewrites, async/await refactoring, sharding work, auth, frontend work, reindex
+drills, vector search, ML, ESQL, or production deployment changes.
+
+### Post-fix-2 checks
+
+Run:
+
+```bash
+pytest
+ruff check app
+mypy app
+```
+
+Then stop uvicorn, start it again without `--reload`, and run:
+
+```bash
+bash tests/bench.sh
+```
+
+The calibration target after fix #2 is `200-500 ms`. Absolute timings vary by
+machine; require relative improvement plus instrumentation evidence.
+
+### Where models may diverge
+
+Opus 4.7 should usually follow the profile or slow-log prompt, connect the
+measured evidence to mapping inspection, and propose the keyword aggregation
+fix. Sonnet 4.6 may stop at code-reading, propose broad ES tuning, or skip the
+slow log/profile step. When that happens, keep the session on the evidence
+gate until Claude produces quoted profile or slow-log evidence and explains how
+the mapping proves the cause.
+
+### Trap #3 remains
+
+After commit 2, stop even if the endpoint still has visible remaining drag.
+Runs 2 and 3 of `bash tests/bench.sh` still should not show stable
+request-cache hits. That remaining issue is intentionally left for the later
+Option B step and should be diagnosed by noticing repeated runs are not cached.
