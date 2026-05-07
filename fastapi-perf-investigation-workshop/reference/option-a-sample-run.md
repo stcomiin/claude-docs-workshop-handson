@@ -345,3 +345,90 @@ template at the top of `app/routes/dashboard.py` can be filled in like this:
 Keep the filled example out of the shipped starting branch. It belongs in the
 facilitator reference or in a participant's completed branch after the measured
 work is done.
+
+## Failure-mode runbook
+
+All recovery steps in this section are for the localhost workshop stack only.
+Do not translate these commands or thresholds into production Elasticsearch
+operations.
+
+### Claude finds the cause too fast
+
+Trigger: Claude names the likely fix before it has produced measured evidence
+from timers, profile output, slow logs, or cache stats.
+
+Facilitator response: Pause implementation and send the participant back to
+the relevant evidence gate. The model may keep its hypothesis, but it must
+prove it before changing code.
+
+Evidence to collect: For trap #1, quoted uvicorn timer output. For trap #2,
+quoted profile or slow-log evidence plus mapping inspection. For trap #3,
+quoted cache evidence from repeated runs or request-cache stats.
+
+Recovery: Resume from the same step once the evidence is quoted. Do not add
+extra fixes just because the model predicted the answer early.
+
+### Fix does not measurably help
+
+Trigger: The participant makes the expected narrow fix, but `bash tests/bench.sh`
+does not show a meaningful relative improvement.
+
+Facilitator response: Check that the committed diff matches the expected fix
+exactly, then rerun the same local measurement path with uvicorn restarted.
+
+Evidence to collect: The commit diff, `pytest` output, uvicorn timer output,
+and at least two benchmark runs from the local workshop container.
+
+Recovery: If the diff is wrong, revert only the participant's attempted fix and
+apply the expected narrow change. If the diff is right but the machine is noisy,
+use relative timer movement rather than the absolute calibration band.
+
+### Bench numbers do not change
+
+Trigger: Repeated benchmark runs produce identical or near-identical numbers
+before and after a fix, or the uvicorn timer output does not reflect the changed
+code.
+
+Facilitator response: Treat this as a local runtime-state problem first, not a
+new optimization task.
+
+Evidence to collect: The running uvicorn command, whether `--reload` is active,
+the latest git commit, and a fresh `curl http://localhost:8765/dashboard/summary`
+response after restart.
+
+Recovery: Stop uvicorn, start it again without `--reload`, rerun `pytest`, then
+run `bash tests/bench.sh` again. If numbers still do not move, restart the
+local Docker Compose stack and reseed according to the README setup steps.
+
+### Docker image will not start or ES is not green/yellow
+
+Trigger: `docker compose -f docker/docker-compose.yml up -d --build` fails, or
+Elasticsearch never reaches a green or yellow local health state.
+
+Facilitator response: Keep the participant on workshop environment recovery.
+Do not let the session become a production cluster tuning drill.
+
+Evidence to collect: `docker compose -f docker/docker-compose.yml ps`,
+`docker compose -f docker/docker-compose.yml logs es`, and the local ES health
+response if it is available.
+
+Recovery: Stop the local stack, remove only the workshop containers and volumes
+if needed, rebuild, wait for ES health, and rerun the seed/setup path from the
+README. Avoid changing index settings except for the documented temporary
+slow-log thresholds, and reset those thresholds after use.
+
+### Warm request cache masks trap #3
+
+Trigger: The participant cannot reproduce the uncached post-commit-2 behavior
+because previous local runs have already warmed request-cache state.
+
+Facilitator response: Reset enough local ES/app state to re-establish a clear
+cold-vs-cached split before accepting or rejecting the trap #3 diagnosis.
+
+Evidence to collect: Request timings from the first run after reset and from
+two repeated runs, plus any available local request-cache hit/miss stats.
+
+Recovery: Clear the local Elasticsearch request cache for the workshop index or
+restart enough of the ES/app stack to make the first request cold again. Then
+run the same benchmark sequence before and after the rounded `bool.filter`
+change so the cold-vs-cached behavior is visible.
