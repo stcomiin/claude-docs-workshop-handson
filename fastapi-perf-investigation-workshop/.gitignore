@@ -4,11 +4,11 @@ __pycache__/
 
 .venv/
 venv/
-uv.lock
 
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+uv.lock
 
 .env
 .env.*

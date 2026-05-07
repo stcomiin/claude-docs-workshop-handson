@@ -127,9 +127,9 @@ Active to monitor in later phases:
   established in Phase 1 (stub) and finalized as the polished version through
   Phase 2/4 README work.
 
-- `uvicorn --reload` poisoning the first benchmark after a fix → addressed in
-  the Phase 1 README stub setup section ("manual restart between bench runs
-  after a fix") and reaffirmed in Phase 2's Option A arc.
+- `uvicorn --reload` benchmark noise after a fix → addressed in the Phase 1
+  README setup section by restarting without `--reload` for benchmark
+  comparisons and treating the first post-restart iteration as warm-up.
 
 ## Session Continuity
 

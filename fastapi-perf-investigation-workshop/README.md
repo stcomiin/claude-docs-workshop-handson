@@ -19,9 +19,10 @@ workshop runtime. Do not treat that setting as production guidance.
 - Elasticsearch uses port 9200.
 - FastAPI uses port 8765.
 
-Use `uvicorn app.main:app --port 8765 --reload` for the first sanity check.
-After applying a fix, stop uvicorn and manually restart it before running
-benchmarks; reload-on-edit can skew the first post-fix run.
+Use `uvicorn app.main:app --port 8765 --reload` only for the first sanity check.
+For benchmark comparisons after a fix, stop uvicorn and restart it without
+`--reload`; the reloader's file watcher and accidental mid-bench restarts add
+noise. Treat the first benchmark iteration after any restart as warm-up.
 
 ## Start The Runtime
 
@@ -73,8 +74,8 @@ mypy app
 
 - Starting runtime: `bash tests/bench.sh` should usually show a 5-10 s
   baseline.
-- After the Option A fix and a manual uvicorn restart, the same harness should
-  usually show a 3-6 s band.
+- After the Option A fix and a uvicorn restart without `--reload`, warmed
+  harness runs should usually show a 3-6 s band.
 
 Remaining slowness after the Option A fix is intentional and belongs to longer
 paths. Do not try to make the endpoint fully fast in this exercise.
@@ -101,9 +102,9 @@ Now design a measurement whose result would *falsify* this hypothesis -- not con
    disprove the hypothesis, run the measurement, and report the result.
 6. If the existing timer blocks are not granular enough, have Claude add
    finer-grained timers inside the worst phase and re-run the benchmark.
-7. Implement a fix for the top bottleneck only. Run `pytest`, manually restart
-   uvicorn without relying on reload timing, and run `bash tests/bench.sh`.
-   The benchmark should improve into the 3-6 s band.
+7. Implement a fix for the top bottleneck only. Run `pytest`, restart uvicorn
+   without `--reload`, and run `bash tests/bench.sh`. Compare warmed runs; the
+   benchmark should improve into the 3-6 s band.
 8. Wrap up with the final measurement, the next fix Claude would investigate,
    and a short explanation of why the measured workflow changed the decision.
 

@@ -109,7 +109,7 @@ Naming convention matches the existing `one-shot-task-dashboard-{bmad,gsd}-works
 - **Windows participants:** use Git Bash or WSL — `bash` and `curl` are required. Docker Desktop with the WSL2 backend is recommended over Hyper-V. This matches the existing BMAD/GSD READMEs.
 - **Memory:** the ES container uses ~1 GB heap by default. Close other heavy apps if you have 8 GB of RAM total. The image ships with `ES_JAVA_OPTS=-Xms512m -Xmx512m` for low-memory laptops; participants on tight machines can stay at that setting.
 - **Ports:** ES on `9200` (internal, app-to-ES); FastAPI on `8765` (bench-to-app). Both configurable in `docker-compose.yml` and `app/es.py` if there's a collision.
-- **`--reload` caveat:** start uvicorn with `--reload` for the first sanity check, but **stop and restart uvicorn manually between bench runs after a fix**. Reload triggers re-import on edit, which can poison the first benchmark immediately after a code change.
+- **`--reload` caveat:** start uvicorn with `--reload` for the first sanity check, but stop it and restart without `--reload` for benchmark comparisons after a fix. The reloader's file watcher and accidental mid-bench restarts add noise; the first benchmark iteration after any restart should be treated as warm-up.
 - **Target model:** Opus 4.7 is the design target. Sonnet 4.6 is a supported fallback but is more likely to skip the slow log / timer output and propose surface-level fixes — the workshop's pivot moment is sharper on Opus 4.7.
 - **Python:** 3.11+ required. `uv python install 3.11` recommended for participants without it.
 - **ES DSL primer in the README:** participants who haven't written an Elasticsearch query before get a 1-page primer covering `term`, `terms`, `range`, `match_all`, `bool`/`must`/`filter`, and `aggs.terms` / `aggs.date_histogram`. Enough to orient — not a substitute for the docs.
@@ -302,7 +302,7 @@ Subordinate lessons:
 | ES version drift (image rebuild needed) | Image tagged with semver (`v1.0.0`); `pyproject.toml` pins `elasticsearch-py` to compatible major; image rebuild documented in `docker/Dockerfile` |
 | Windows participants cannot run `bash bench.sh` | README requires Git Bash or WSL on Windows (matches existing BMAD/GSD READMEs); Docker Desktop with WSL2 backend recommended |
 | Three-terminal setup (uvicorn, Claude, bench; ES detached) overwhelms small screens | Setup notes (Section 7.1) state the requirement up front; recommend tile windows or use `tmux` / Windows Terminal panes |
-| `uvicorn --reload` triggers re-import on edit and poisons the first benchmark after a fix | Setup notes recommend stopping/restarting uvicorn between bench runs after fixes; use `--reload` only during initial sanity check |
+| `uvicorn --reload` adds benchmark noise through file watching or accidental mid-bench restarts | Setup notes recommend restarting without `--reload` for benchmark comparisons and treating the first post-restart iteration as warm-up |
 | Port 9200 (ES) or 8765 (FastAPI) already in use | `docker-compose.yml` and `app/es.py` document how to remap; troubleshooting in `reference/option-a-sample-run.md` |
 | `uv pip install -e .` PATH issues on Windows | Document `pip install -e .` fallback; verify `uv` is on PATH in setup notes |
 | Participant copy-pastes Option A sample run | Same convention as existing BMAD/GSD handsons — sample run is troubleshooting, not the answer key |

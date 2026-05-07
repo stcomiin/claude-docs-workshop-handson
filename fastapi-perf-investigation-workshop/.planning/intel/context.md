@@ -133,7 +133,7 @@ The portable habit, restated for any audience:
 | ES version drift (image rebuild needed) | Image tagged with semver (`v1.0.0`); `pyproject.toml` pins `elasticsearch-py`; image rebuild documented |
 | Windows participants cannot run `bash bench.sh` | README requires Git Bash or WSL; Docker Desktop with WSL2 backend recommended |
 | Three-terminal setup overwhelms small screens | Setup notes (Section 7.1) state the requirement up front; recommend tile windows or `tmux` / Windows Terminal panes |
-| `uvicorn --reload` poisons first benchmark after fix | Setup notes recommend stopping/restarting uvicorn between bench runs after fixes; use `--reload` only during initial sanity check |
+| `uvicorn --reload` adds file-watcher noise or accidental restarts during benchmark comparisons | Setup notes recommend restarting without `--reload` for benchmark comparisons and treating the first post-restart iteration as warm-up |
 | Port 9200 (ES) or 8765 (FastAPI) already in use | `docker-compose.yml` and `app/es.py` document remap; troubleshooting in `reference/option-a-sample-run.md` |
 | `uv pip install -e .` PATH issues on Windows | Document `pip install -e .` fallback; verify `uv` is on PATH in setup notes |
 | Participant copy-pastes Option A sample run | Same convention as existing BMAD/GSD handsons — sample run is troubleshooting, not the answer key |

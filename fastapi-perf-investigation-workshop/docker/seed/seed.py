@@ -15,6 +15,7 @@ EXPECTED_COUNT = 50000
 MAPPINGS_PATH = Path("/seed/mappings.json")
 DOCUMENTS_PATH = Path("/seed/documents.ndjson")
 TIMEOUT_SECONDS = 180
+REQUEST_TIMEOUT_SECONDS = 60
 
 
 def request(
@@ -28,7 +29,7 @@ def request(
     if body is not None:
         headers["Content-Type"] = content_type
     req = Request(f"{ES_URL}{path}", data=body, headers=headers, method=method)
-    with urlopen(req, timeout=10) as response:
+    with urlopen(req, timeout=REQUEST_TIMEOUT_SECONDS) as response:
         return response.status, response.read()
 
 

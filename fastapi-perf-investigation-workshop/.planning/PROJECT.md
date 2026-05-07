@@ -122,7 +122,8 @@ Docker required (Desktop on Mac/Windows; Engine on Linux). Three terminals:
 `uvicorn`, `claude`, harness/tests. ES container ships with
 `ES_JAVA_OPTS=-Xms512m -Xmx512m` for low-memory laptops. ES on `9200`, FastAPI on
 `8765`. Python 3.11+. Git Bash or WSL for Windows. `--reload` only for first
-sanity check; manual restart between bench runs after a fix.
+sanity check; restart without `--reload` for benchmark comparisons after a fix
+and treat the first post-restart iteration as warm-up.
 (`CON-setup-prerequisites`)
 
 ### Facilitator runbook
