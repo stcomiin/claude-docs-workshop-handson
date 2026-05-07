@@ -67,6 +67,14 @@ def _count_from_response(response: Any) -> int:
     return int(_json_dict(response).get("count", 0))
 
 
+def _total_hits_from_response(response: JsonDict) -> int:
+    hits = _json_dict(response.get("hits", {}))
+    total = hits.get("total", 0)
+    if isinstance(total, dict):
+        return int(total.get("value", 0))
+    return int(total)
+
+
 def _growth_rate(total_30d: int, prior_total: int) -> float:
     if prior_total > 0:
         return round((total_30d - prior_total) / prior_total, 4)
@@ -134,65 +142,38 @@ def count_user_activities(es: ActivitiesEsClient, user_id: str) -> int:
 
 
 def compute_org_summary(es: ActivitiesEsClient) -> OrgSummary:
-    body: JsonDict = {
+    last_30d_body: JsonDict = {
         "size": 0,
+        "track_total_hits": True,
         "query": {
             "bool": {
-                "filter": [
-                    {"range": {"created_at": {"gte": "now-60d/d", "lt": "now/d"}}}
+                "must": [
+                    {"range": {"created_at": {"gte": "now-30d", "lt": "now"}}}
                 ]
             }
         },
         "aggs": {
-            "last_30d": {
-                "filter": {
-                    "bool": {
-                        "filter": [
-                            {
-                                "range": {
-                                    "created_at": {
-                                        "gte": "now-30d/d",
-                                        "lt": "now/d",
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                },
-                "aggs": {
-                    "unique_users": {"cardinality": {"field": "user_id"}},
-                    "username_distribution": {
-                        "terms": {"field": "username", "size": 10}
-                    },
-                },
-            },
-            "prior_30d": {
-                "filter": {
-                    "bool": {
-                        "filter": [
-                            {
-                                "range": {
-                                    "created_at": {
-                                        "gte": "now-60d/d",
-                                        "lt": "now-30d/d",
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            },
+            "unique_users": {"cardinality": {"field": "user_id"}},
+            "username_distribution": {"terms": {"field": "username", "size": 10}},
         },
     }
+    prior_30d_body: JsonDict = {
+        "query": {
+            "bool": {
+                "must": [
+                    {"range": {"created_at": {"gte": "now-60d", "lt": "now-30d"}}}
+                ]
+            }
+        }
+    }
 
-    response = _json_dict(es.search(index=INDEX_NAME, body=body))
+    response = _json_dict(es.search(index=INDEX_NAME, body=last_30d_body))
     aggregations = _json_dict(response.get("aggregations", {}))
-    last_30d = _json_dict(aggregations.get("last_30d", {}))
-    prior_30d = _json_dict(aggregations.get("prior_30d", {}))
-    unique_users = _json_dict(last_30d.get("unique_users", {}))
+    unique_users = _json_dict(aggregations.get("unique_users", {}))
+    prior_response = es.count(index=INDEX_NAME, body=prior_30d_body)
 
-    total_30d = int(last_30d.get("doc_count", 0))
-    prior_total = int(prior_30d.get("doc_count", 0))
+    total_30d = _total_hits_from_response(response)
+    prior_total = _count_from_response(prior_response)
 
     return {
         "total_activities_30d": total_30d,
