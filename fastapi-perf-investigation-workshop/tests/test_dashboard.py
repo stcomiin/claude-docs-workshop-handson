@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -150,3 +151,37 @@ def test_response_is_json_serializable(
     response = test_client.get("/dashboard/summary")
 
     json.dumps(response.json())
+
+
+def test_phase2_mapping_contains_username_text_fielddata_keyword_subfield() -> None:
+    mapping = json.loads(Path("docker/seed/mappings.json").read_text(encoding="utf-8"))
+    username = mapping["mappings"]["properties"]["username"]
+
+    assert username["type"] == "text"
+    assert username["fielddata"] is True
+    assert username["fields"]["keyword"]["type"] == "keyword"
+
+
+def test_compute_org_summary_uses_query_context_unrounded_now_and_username_text_agg(
+    client: tuple[TestClient, FakeElasticsearch],
+) -> None:
+    test_client, fake_es = client
+
+    response = test_client.get("/dashboard/summary")
+
+    assert response.status_code == 200
+    body = next(
+        search_body
+        for search_body in fake_es.search_bodies
+        if "unique_users" in search_body.get("aggs", {})
+    )
+
+    assert body["query"]["bool"]["must"][0]["range"]["created_at"] == {
+        "gte": "now-30d",
+        "lt": "now",
+    }
+    assert body["aggs"]["username_distribution"]["terms"]["field"] == "username"
+
+    serialized = json.dumps(body)
+    assert "username.keyword" not in serialized
+    assert "now-30d/d" not in serialized
