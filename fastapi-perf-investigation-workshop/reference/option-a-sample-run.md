@@ -230,3 +230,88 @@ After commit 2, stop even if the endpoint still has visible remaining drag.
 Runs 2 and 3 of `bash tests/bench.sh` still should not show stable
 request-cache hits. That remaining issue is intentionally left for the later
 Option B step and should be diagnosed by noticing repeated runs are not cached.
+
+## Option B steps 11-12
+
+This extension starts after the participant has already made the expected
+second Option B commit:
+
+```text
+fix: aggregate on username.keyword to avoid fielddata on text field
+```
+
+### Expected trap #3 investigation path
+
+The participant re-runs `bash tests/bench.sh` several times after commit 2 and
+notices that the endpoint is much faster than the starting point, but repeated
+runs do not settle into stable request-cache hits. Claude must connect that
+remaining drag to the shape of the Elasticsearch query, not to a new framework
+or infrastructure rewrite.
+
+The accepted diagnosis is two-part:
+
+1. The 30-day range lives in `bool.must`, so it runs in query context rather
+   than filter context.
+2. The range uses unrounded date math, `now-30d` to `now`, so repeated
+   requests keep producing a moving range key.
+
+Either half alone is insufficient. Moving the range to `bool.filter` without
+rounding still leaves a moving time boundary, and rounding the range while
+leaving it in `bool.must` still does not express the range as cache-friendly
+filter context.
+
+### Cache evidence
+
+The facilitator should require quoted cache evidence before accepting the
+diagnosis. Good evidence includes repeated request timings plus one of these
+local Elasticsearch signals:
+
+- Search profile or slow-log output showing the same `compute_org_summary`
+  range query continuing to execute after commit 2.
+- Request-cache stats before and after repeated identical dashboard requests
+  showing misses or no useful hit growth.
+- A controlled check where the same query body with a rounded filter range
+  produces stable cached behavior.
+
+The exact date range in the fix should be `now-30d/d` to `now/d`.
+
+### Expected Option B commit 3
+
+The participant should make one narrow third commit:
+
+```text
+fix: move date range to filter context, round now to day for cache hit
+```
+
+The code change target is the `created_at` range inside
+`compute_org_summary`. Move the range from `bool.must` to `bool.filter` and
+round the date math from `now-30d` / `now` to `now-30d/d` / `now/d`.
+
+### Post-fix-3 checks
+
+Run:
+
+```bash
+pytest -m "not starting_state"
+ruff check app
+mypy app
+```
+
+Then stop uvicorn, start it again without `--reload`, and run:
+
+```bash
+bash tests/bench.sh
+bash tests/bench.sh
+bash tests/bench.sh
+```
+
+The calibration target after fix #3 is `50-150 ms cached / 200-400 ms cold`.
+Absolute timings vary by machine, but the important result is a visible
+cold-vs-cached split after the two-part cache fix.
+
+### Where models may diverge
+
+Claude may keep reading Python code after commit 2 because the remaining issue
+is easy to mistake for application overhead. Keep the session on repeated-run
+evidence and Elasticsearch cache behavior until the model explains both the
+query-context problem and the moving `now` range key.
