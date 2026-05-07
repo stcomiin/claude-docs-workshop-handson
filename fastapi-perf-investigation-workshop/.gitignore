@@ -1,8 +1,10 @@
 __pycache__/
 *.py[cod]
+*.egg-info/
 
 .venv/
 venv/
+uv.lock
 
 .pytest_cache/
 .mypy_cache/

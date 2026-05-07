@@ -48,8 +48,16 @@ class FakeElasticsearch:
 
     def count(self, *, index: str, body: dict[str, Any]) -> dict[str, int]:
         assert index == "activities"
-        filters = body["query"]["bool"]["filter"]
-        user_id = filters[0]["term"]["user_id"]
+        bool_query = body["query"]["bool"]
+        filters = bool_query.get("filter", bool_query.get("must", []))
+        term_filter = next(
+            (item for item in filters if "term" in item and "user_id" in item["term"]),
+            None,
+        )
+        if term_filter is None:
+            return {"count": 30}
+
+        user_id = term_filter["term"]["user_id"]
         counts = {"u_0001": 18, "u_0002": 15, "u_0003": 12}
         return {"count": counts[user_id]}
 
