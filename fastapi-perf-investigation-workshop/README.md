@@ -252,17 +252,72 @@ fix: replace per-user _count loop with single terms aggregation
     fix: aggregate on username.keyword to avoid fielddata on text field
     ```
 
-The third trap remains after step 10. Runs 2 and 3 of `bash tests/bench.sh`
-should not show stable request-cache hits yet. Stop here; diagnosing the
-remaining cache behavior belongs to the next Option B step.
+## Option B: steps 11-12
+
+Continue here only after finishing Option B step 10 and creating the second
+participant commit:
+
+```text
+fix: aggregate on username.keyword to avoid fielddata on text field
+```
+
+11. Restart uvicorn without `--reload`, run `bash tests/bench.sh`, and compare
+    the three runs. The endpoint should be much faster than the original
+    baseline, but runs 2 and 3 should still not show stable request-cache hits.
+    Do not accept a code-reading guess. Claude must explain the cache behavior
+    from repeated measurements before proposing the final fix.
+
+    The expected diagnosis has two coupled defects:
+
+    - The 30-day `created_at` range inside `compute_org_summary` sits under
+      `bool.must`, which puts it in query context even though it does not need
+      scoring.
+    - The range uses non-rounded `now-30d` and `now`, so the request body keeps
+      changing and cannot settle into a stable request-cache key.
+
+    either half alone is insufficient: `bool.filter` with non-rounded `now`
+    still changes the request body, and rounded date math under `bool.must`
+    still pays query/scoring-context cost for a yes/no constraint.
+
+    Change only the 30-day aggregation search body in
+    `app/routes/dashboard.py`: move the `created_at` range from `bool.must` to
+    `bool.filter`, and change `now-30d` / `now` to `now-30d/d` / `now/d`.
+
+12. Run the participant post-fix checks:
+
+    ```bash
+    pytest -m "not starting_state"
+    ruff check app
+    mypy app
+    ```
+
+    Restart uvicorn without `--reload`, then run:
+
+    ```bash
+    bash tests/bench.sh
+    ```
+
+    Record both cold and cached numbers. The calibration target after fix #3 is
+    `50-150 ms cached / 200-400 ms cold`; local pass/fail is still relative
+    improvement plus timer/cache evidence.
+
+    Fill in the final notes block at the top of `app/routes/dashboard.py` with
+    the before/after evidence for all three fixes.
+
+    The expected third participant commit is:
+
+    ```text
+    fix: move date range to filter context, round now to day for cache hit
+    ```
 
 ## Scope Guardrails
 
 Option A stops after the single measured N+1 fix. Option B steps 9-10 stop
-after the `username.keyword` aggregation fix. Do not add async/await
+after the `username.keyword` aggregation fix; Option B steps 11-12 stop after
+the two-part cache fix and final measurement narrative. Do not add async/await
 refactoring, authentication, frontend work, production deployment steps,
 Elasticsearch cluster operations, reindex strategy drills, vector search, ML
-features, ESQL, or the later cache fix.
+features, ESQL, or any broader cache architecture work.
 
 Facilitators can use `reference/option-a-sample-run.md` when a session needs
 troubleshooting support.
