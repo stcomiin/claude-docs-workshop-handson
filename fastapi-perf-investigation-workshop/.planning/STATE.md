@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-05-07T00:16:23Z"
+last_updated: "2026-05-07T02:29:23Z"
 progress:
   total_phases: 5
   completed_phases: 2
@@ -44,16 +44,17 @@ progress:
 
 ## Current Focus
 
-Phase 2 is complete and verified. The runtime now contains the Phase 2 hidden
-trap shape, pytest locks that shape structurally, and README/reference docs
-cover the complete Option A participant and facilitator path. Next up is
-planning Phase 3, which extends the same slice into Option B trap #2.
+Phase 2 is complete, verified, and shipped in PR #3. The runtime now contains
+the Phase 2 hidden trap shape, pytest locks that shape structurally, and
+README/reference docs cover the complete Option A participant and facilitator
+path. Next up is planning Phase 3, which extends the same slice into Option B
+trap #2.
 
 ## Current Position
 
 - **Phase:** 3 — Option B Trap #2 Narrative — Mapping & profile
 - **Plan:** 0 of 0 (not planned)
-- **Status:** Ready to plan Phase 3
+- **Status:** Phase 2 shipped in PR #3; ready to plan Phase 3
 - **Progress:** `[####      ]` 40% by phase (2 of 5 phases complete);
   100% by planned plan count (6 of 6 plans complete)
 
@@ -151,6 +152,14 @@ Active to monitor in later phases:
 
 - Completed Phase 2 traceability updates in `ROADMAP.md`, `REQUIREMENTS.md`,
   and `STATE.md`.
+
+- Shipped Phase 2 by pushing branch
+  `feat/fastapi-perf-workshop-phase-2-option-a` and opening PR #3:
+  https://github.com/stcomiin/claude-docs-workshop-handson/pull/3.
+  Before opening the PR, reran `uv run pytest -q`, `uv run ruff check app
+  tests/test_dashboard.py`, `uv run mypy app`, Phase 2 README/reference static
+  checks, `CLAUDE.md` / `AGENTS.md` absence checks, and
+  `docker compose -f docker/docker-compose.yml config`.
 
 ### Prior planning history
 
