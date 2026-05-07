@@ -310,6 +310,32 @@ fix: aggregate on username.keyword to avoid fielddata on text field
     fix: move date range to filter context, round now to day for cache hit
     ```
 
+## Closing Lesson
+
+Prove that hypothesis with data. Run the perf harness, read the instrumentation
+output, tell me which named block dominates wall-clock time, and quote the
+numbers. Only after you have the numbers, propose the fix. Then try to falsify
+your own hypothesis before you accept it.
+
+The Elasticsearch details matter for this workshop, but the habit is portable:
+measure first, change one proven cause, and make the next measurement explain
+what changed.
+
+## Appendix B: Translate To Your World
+
+The prompts are stack-agnostic. The instrumentation changes by stack; the
+discipline does not.
+
+| Workshop primitive (Elasticsearch) | Postgres / SQL | MongoDB | Spark / Trino / dbt |
+|---|---|---|---|
+| `tests/bench.sh` | `pgbench`, query timing, APM percentile widget | `mongostat`, query timing | `EXPLAIN`, Spark UI, dbt run timing |
+| Profile API / slow log | `EXPLAIN ANALYZE`, `auto_explain`, slow query log | `db.system.profile`, `explain("executionStats")` | Spark UI stage view, Trino query plan, dbt `--debug` |
+| Named timer blocks | Sentry, Datadog, or New Relic span names; database span events | APM span names | Spark stage timing, dbt model timing |
+| Mapping-as-config | Indexes, column types, partial indexes | Index definitions, sparse indexes | Partition columns, file format, Z-order columns |
+| Query-vs-filter cache context | Materialized views, query-result caches, prepared-statement plans | `hint()`, index intersection | Result caching layers, broadcast hints, predicate pushdown |
+| Pivot prompt | Identical wording | Identical wording | Identical wording |
+| Falsification prompt | Identical wording | Identical wording | Identical wording |
+
 ## Scope Guardrails
 
 Option A stops after the single measured N+1 fix. Option B steps 9-10 stop
