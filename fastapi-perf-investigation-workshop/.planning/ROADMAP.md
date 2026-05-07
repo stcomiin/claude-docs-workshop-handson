@@ -41,7 +41,7 @@ artifact, not a participant-distributed artifact.
 
 - [x] **Phase 1: Tracer Slice — Workshop Motion End-to-End** — full directory layout stubbed, 50k seed, trap #1 (visible N+1) only, three timer blocks, 4 pytest tests, 3-run bench, README stub with the pivot prompt, and a 10-minute facilitator walkthrough that proves the motion on Mac/Windows/Linux.
 - [x] **Phase 2: Option A Complete Vertical** — traps #2 and #3 added physically (not narratively engaged), full Option A 8-step arc in README, falsification prompt, Option A entry in `reference/option-a-sample-run.md`. After this phase, a participant can run Option A end-to-end against Opus 4.7 and walk away with the takeaway.
-- [x] **Phase 3: Option B Trap #2 Narrative — Mapping & `_search?profile=true`** — Option B steps 9-10 in README, mapping-inspection arc, `_search?profile=true` / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed. (completed 2026-05-07)
+- [ ] **Phase 3: Option B Trap #2 Narrative — Mapping & `_search?profile=true`** — Option B steps 9-10 in README, mapping-inspection arc, `_search?profile=true` / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed. UAT found executable-command gaps; `03-04` is planned.
 - [ ] **Phase 4: Option B Trap #3 + Workshop Polish** — Option B steps 11-12, comment block instruction at top of `dashboard.py`, ES DSL primer, Appendix B translate-to-your-world, closing-slide stack-agnostic restatement, all 5 failure-mode runbook entries. Post-fix-3 band (50–150 ms cached / 200–400 ms cold) confirmed.
 - [ ] **Phase 5: Dual-Model Pre-Flight Validation** — 24-hour pre-flight against Opus 4.7 (target) and Sonnet 4.6 (fallback) on a fresh clone with the published image; all 5 failure-mode runbook entries either non-triggering or recoverable.
 
@@ -147,6 +147,10 @@ artifact, not a participant-distributed artifact.
 
 - [x] `03-03` — Static docs coverage and runtime trap-boundary tests for Phase 3.
 
+**Wave 3** *(UAT gap closure)*
+
+- [ ] `03-04` — Fix profile command syntax and resolve participant post-fix pytest conflict found by UAT.
+
 **Cross-cutting constraints:**
 
 - Require profile or slow-log evidence before accepting the trap #2 diagnosis.
@@ -202,6 +206,6 @@ artifact, not a participant-distributed artifact.
 |-------|----------------|--------|-----------|
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
-| 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 3/3 | Complete | 2026-05-07 |
+| 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 3/4 | UAT gaps found | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |

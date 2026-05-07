@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-last_updated: "2026-05-07T06:05:00Z"
+status: executing
+last_updated: "2026-05-07T08:28:37Z"
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 10
+  completed_phases: 2
+  total_plans: 11
   completed_plans: 10
-  percent: 60
+  percent: 40
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -44,23 +44,24 @@ progress:
 
 ## Current Focus
 
-Phase 3 is complete and verified. The deliverable now extends the existing
-Option A slice into Option B trap #2 with README profile/slow-log guidance,
-facilitator reference coverage, and static tests while preserving trap #3 for
-Phase 4.
+Phase 3 UAT found three executable-command gaps in the Option B trap #2 path.
+The shipped automated gates still pass, but the profile command is rejected by
+Elasticsearch 9.3.3 and the documented participant `username.keyword` fix
+conflicts with the current default pytest suite. Plan `03-04` is ready for gap
+closure.
 
 ## Current Position
 
-- **Phase:** 4
-- **Plan:** Not started
-- **Status:** Ready to plan
-- **Progress:** `[######    ]` 60% by phase (3 of 5 phases complete);
-  100% by planned plan count (10 of 10 plans complete)
+- **Phase:** 3
+- **Plan:** 4 of 4
+- **Status:** UAT gaps found; ready to execute gap closure
+- **Progress:** `[####      ]` 40% by phase (2 of 5 phases complete);
+  91% by planned plan count (10 of 11 plans complete)
 
 ```
 Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
 Phase 2: Option A Complete Vertical                           [##########] Complete (4/4 plans)
-Phase 3: Option B Trap #2 Narrative — Mapping & profile       [##########] Complete (3/3 plans)
+Phase 3: Option B Trap #2 Narrative — Mapping & profile       [#######   ] UAT gaps found (3/4 plans)
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
 Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not started
 ```
@@ -70,11 +71,11 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > Updated as phases complete. Metrics are observable from the deliverable, not
 > from process artifacts.
 
-- **Phases complete:** 3 / 5
-- **Plans complete:** 10 / 10
-- **v1 requirements satisfied:** 5 / 7
-- **Verification gates passing in deliverable:** Phase 1, Phase 2, and Phase 3 gates
-  passing
+- **Phases complete:** 2 / 5
+- **Plans complete:** 10 / 11
+- **v1 requirements satisfied:** 4 / 7
+- **Verification gates passing in deliverable:** Phase 1 and Phase 2 gates
+  passing; Phase 3 automated gates pass but UAT gaps are open
 
   - `docker compose -f docker/docker-compose.yml config`: passing
   - `uv run pytest`: passing (9 tests)
@@ -82,6 +83,7 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
   - `mypy app`: passing
   - Phase 2 README/reference static checks: passing
   - Phase 3 README/reference static checks: passing
+  - Phase 3 UAT: complete, 2 passed / 3 issues; `03-04` planned
   - `CLAUDE.md` / `AGENTS.md` absence check: passing
   - live Docker seed and timing calibration after Phase 2: passing under the
     relative-improvement contract; current VM rerun measured
@@ -228,10 +230,11 @@ Active to monitor in later phases:
 
 ### What happens next (next session)
 
-- Discuss Phase 4: `/gsd-discuss-phase 4 --auto` (Option B Trap #3 + Workshop Polish).
+- Execute Phase 3 UAT gap closure: `/gsd-execute-phase 3 --gaps-only`.
 
-- Phase 4 should extend the Option B path into trap #3, add the ES DSL primer,
-  Appendix B, closing-slide restatement, and complete the facilitator runbook.
+- Gap closure should fix the profile command form and align participant
+  post-fix verification with the shipped starting-state guard tests before
+  Phase 4 starts.
 
 ### Files to keep in working memory
 
