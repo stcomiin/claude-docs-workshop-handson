@@ -12,6 +12,13 @@ from app.main import app
 from app.routes import dashboard
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def project_file(relative_path: str) -> Path:
+    return PROJECT_ROOT / relative_path
+
+
 class FakeElasticsearch:
     def __init__(self) -> None:
         self.search_bodies: list[dict[str, Any]] = []
@@ -154,7 +161,9 @@ def test_response_is_json_serializable(
 
 
 def test_phase2_mapping_contains_username_text_fielddata_keyword_subfield() -> None:
-    mapping = json.loads(Path("docker/seed/mappings.json").read_text(encoding="utf-8"))
+    mapping = json.loads(
+        project_file("docker/seed/mappings.json").read_text(encoding="utf-8")
+    )
     username = mapping["mappings"]["properties"]["username"]
 
     assert username["type"] == "text"
@@ -162,6 +171,7 @@ def test_phase2_mapping_contains_username_text_fielddata_keyword_subfield() -> N
     assert username["fields"]["keyword"]["type"] == "keyword"
 
 
+@pytest.mark.starting_state
 def test_compute_org_summary_uses_query_context_unrounded_now_and_username_text_agg(
     client: tuple[TestClient, FakeElasticsearch],
 ) -> None:
@@ -185,3 +195,49 @@ def test_compute_org_summary_uses_query_context_unrounded_now_and_username_text_
     serialized = json.dumps(body)
     assert "username.keyword" not in serialized
     assert "now-30d/d" not in serialized
+
+
+def test_phase3_readme_documents_profile_slow_log_and_keyword_fix() -> None:
+    readme = project_file("README.md").read_text(encoding="utf-8")
+
+    assert "Option B: steps 9-10" in readme
+    assert "_search?pretty" in readme
+    assert '"profile": true' in readme
+    assert "_search?pretty&profile=true" not in readme
+    assert "index.search.slowlog.threshold.query.trace" in readme
+    assert "_mapping?filter_path=*.mappings.properties.username" in readme
+    assert "username.keyword" in readme
+    assert 'pytest -m "not starting_state"' in readme
+    assert "fix: aggregate on username.keyword to avoid fielddata on text field" in readme
+    assert "200-500 ms" in readme
+    assert "fix: move date range to filter context, round now to day for cache hit" not in readme
+    assert "now-30d/d" not in readme
+
+
+def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
+    reference = project_file("reference/option-a-sample-run.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "Option B steps 9-10" in reference
+    assert "Expected trap #2 investigation path" in reference
+    assert "Profile API or slow-log evidence" in reference
+    assert '"profile": true' in reference
+    assert "_search?profile=true" not in reference
+    assert "Mapping inspection" in reference
+    assert "quoted profile or slow-log evidence" in reference
+    assert "single aggregation-field change" in reference
+    assert 'pytest -m "not starting_state"' in reference
+    assert "Trap #3 remains" in reference
+    assert "request-cache hits" in reference
+    assert "fix: aggregate on username.keyword to avoid fielddata on text field" in reference
+    assert (
+        "fix: move date range to filter context, round now to day for cache hit"
+        not in reference
+    )
+    assert "now-30d/d" not in reference
+
+
+def test_phase3_no_agent_instruction_files_ship() -> None:
+    assert not project_file("CLAUDE.md").exists()
+    assert not project_file("AGENTS.md").exists()

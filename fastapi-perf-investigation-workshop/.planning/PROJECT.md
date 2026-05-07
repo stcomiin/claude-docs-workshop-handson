@@ -29,13 +29,12 @@ statistical correctness).
 
 ## Current Focus
 
-Bootstrapping the workshop from spec into shippable form. Single milestone, five
-**tracer-bullet vertical slices**: tracer (workshop motion end-to-end with
-trap #1 only) → Option A complete vertical → Option B trap #2 narrative →
-Option B trap #3 + workshop polish → dual-model pre-flight. Each slice is
-independently runnable, so integration risks (Windows Docker, uvicorn
-`--reload`, ES cache state, timer-log parsing) surface at Phase 1 rather than
-at Phase 5.
+Phase 3 gap closure is complete. The workshop now covers Option A plus Option B
+steps 9-10 with a live-tested Profile API request-body command, slow-log
+evidence path, mapping inspection, and a participant post-fix verification
+command that does not conflict with shipped pre-fix trap-shape guards. Phase 4
+is next: trap #3, the ES DSL primer, Appendix B, closing-slide restatement, and
+the full facilitator runbook.
 
 ## Constraints (binding)
 

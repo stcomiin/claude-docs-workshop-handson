@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-05-07T02:54:11Z"
+status: ready_to_plan
+last_updated: "2026-05-07T09:04:59Z"
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
-  percent: 40
+  completed_phases: 3
+  total_plans: 11
+  completed_plans: 11
+  percent: 60
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -44,25 +44,24 @@ progress:
 
 ## Current Focus
 
-Phase 2 is complete, verified, and ready for merge after UAT gap closure. The
-runtime contains the Phase 2 hidden trap shape, pytest locks that shape
-structurally, and README/reference docs cover the complete Option A participant
-and facilitator path with timing described as relative improvement plus
-calibration examples. Next up is planning Phase 3, which extends the same slice
-into Option B trap #2.
+Phase 3 gap closure is complete and shipped as PR #4. The deliverable now
+extends the existing Option A slice into Option B trap #2 with live-tested
+Profile API guidance, slow-log guidance, facilitator reference coverage, and
+post-fix verification that excludes shipped pre-fix trap-shape guards when
+appropriate. Phase 4 is ready to plan.
 
 ## Current Position
 
-- **Phase:** 3 — Option B Trap #2 Narrative — Mapping & profile
-- **Plan:** 0 of 0 (not planned)
-- **Status:** Phase 2 UAT gaps closed; ready to merge PR #3 and then plan Phase 3
-- **Progress:** `[####      ]` 40% by phase (2 of 5 phases complete);
-  100% by planned plan count (6 of 6 plans complete)
+- **Phase:** 4
+- **Plan:** Not started
+- **Status:** Ready to plan
+- **Progress:** `[######    ]` 60% by phase (3 of 5 phases complete);
+  100% by planned plan count (11 of 11 plans complete)
 
 ```
 Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
-Phase 2: Option A Complete Vertical                           [##########] Complete (3/3 plans)
-Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
+Phase 2: Option A Complete Vertical                           [##########] Complete (4/4 plans)
+Phase 3: Option B Trap #2 Narrative — Mapping & profile       [##########] Complete (4/4 plans)
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
 Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not started
 ```
@@ -72,21 +71,25 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > Updated as phases complete. Metrics are observable from the deliverable, not
 > from process artifacts.
 
-- **Phases complete:** 2 / 5
-- **Plans complete:** 7 / 7
-- **v1 requirements satisfied:** 4 / 7
-- **Verification gates passing in deliverable:** Phase 1 and Phase 2 gates
+- **Phases complete:** 3 / 5
+- **Plans complete:** 11 / 11
+- **v1 requirements satisfied:** 5 / 7
+- **Verification gates passing in deliverable:** Phase 1, Phase 2, and Phase 3 gates
   passing
+
   - `docker compose -f docker/docker-compose.yml config`: passing
-  - `pytest`: passing (6 tests)
-  - `ruff check app tests/test_dashboard.py`: passing
+  - `uv run pytest`: passing (9 tests)
+  - `uv run ruff check app`: passing
   - `mypy app`: passing
   - Phase 2 README/reference static checks: passing
+  - Phase 3 README/reference static checks: passing
+  - Phase 3 UAT: complete after gap closure, 5 passed / 0 issues
   - `CLAUDE.md` / `AGENTS.md` absence check: passing
   - live Docker seed and timing calibration after Phase 2: passing under the
     relative-improvement contract; current VM rerun measured
     3.178/1.850/1.605 s before the Option A fix and 0.114/0.098/0.085 s after
     it.
+
 - **Facilitator pre-flight status:** not yet attempted (Phase 5)
 
 ## Accumulated Context
@@ -164,6 +167,14 @@ Active to monitor in later phases:
   checks, `CLAUDE.md` / `AGENTS.md` absence checks, and
   `docker compose -f docker/docker-compose.yml config`.
 
+- Shipped Phase 3 by pushing branch
+  `feat/fastapi-perf-workshop-phase-3-option-b-trap-2` and opening PR #4:
+  https://github.com/stcomiin/claude-docs-workshop-handson/pull/4. Phase 3
+  verification had passed with `uv run pytest`, `uv run ruff check app
+  tests/test_dashboard.py`, `uv run mypy app`, live Profile API verification,
+  slow-log enable/reset verification, and the detached post-fix
+  `uv run pytest -m "not starting_state"` gate.
+
 ### Prior planning history
 
 - Planned Phase 1 with three executable wave-based plans under
@@ -227,10 +238,10 @@ Active to monitor in later phases:
 
 ### What happens next (next session)
 
-- Plan Phase 3: `/gsd-plan-phase 3 --auto` (Option B Trap #2 Narrative).
+- Discuss Phase 4: `/gsd-discuss-phase 4 --auto` (Option B Trap #3 + Workshop Polish).
 
-- Phase 3 should extend the existing Option A slice with the mapping/profile
-  investigation path for Option B steps 9-10, while leaving trap #3 for Phase 4.
+- Phase 4 should extend the Option B path into trap #3, add the ES DSL primer,
+  Appendix B, closing-slide restatement, and complete the facilitator runbook.
 
 ### Files to keep in working memory
 

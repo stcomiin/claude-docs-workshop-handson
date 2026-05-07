@@ -1,8 +1,8 @@
 # FastAPI Perf Investigation Workshop
 
-This is the Option A path: a 40-45 minute performance investigation exercise
-that teaches measured debugging, falsification, and one narrow fix for the
-visible N+1 count loop.
+This is the Option A path plus the Option B trap #2 continuation: a
+performance investigation exercise that teaches measured debugging,
+falsification, and narrow Elasticsearch fixes proven by instrumentation.
 
 The Elasticsearch container disables security for a single-node localhost
 workshop runtime. Do not treat that setting as production guidance.
@@ -123,12 +123,126 @@ The expected participant commit is:
 fix: replace per-user _count loop with single terms aggregation
 ```
 
+## Option B: steps 9-10
+
+Continue here only after finishing Option A and creating this first participant
+commit:
+
+```text
+fix: replace per-user _count loop with single terms aggregation
+```
+
+9. Restart uvicorn without `--reload`, run `bash tests/bench.sh`, and read the
+   uvicorn timer output again. The top-level bottleneck should have shifted
+   away from `count_per_user`; `compute_org_summary` is now the dominant
+   remaining cost. Do not accept a code-reading guess. Claude must prove the
+   next hypothesis with the Elasticsearch Profile API or the Elasticsearch slow
+   log before proposing a fix.
+
+   To profile the same aggregation shape that `compute_org_summary` runs:
+
+   ```bash
+   curl -s -X POST 'http://localhost:9200/activities/_search?pretty' \
+     -H 'Content-Type: application/json' \
+     -d '{
+       "profile": true,
+       "size": 0,
+       "track_total_hits": true,
+       "query": {
+         "bool": {
+           "must": [
+             {"range": {"created_at": {"gte": "now-30d", "lt": "now"}}}
+           ]
+         }
+       },
+       "aggs": {
+         "unique_users": {"cardinality": {"field": "user_id"}},
+         "username_distribution": {"terms": {"field": "username", "size": 10}}
+       }
+     }'
+   ```
+
+   Slow log alternative for the local workshop container:
+
+   ```bash
+   curl -s -X PUT 'http://localhost:9200/activities/_settings' \
+     -H 'Content-Type: application/json' \
+     -d '{
+       "index.search.slowlog.threshold.query.trace": "0ms",
+       "index.search.slowlog.threshold.fetch.trace": "0ms"
+     }'
+
+   bash tests/bench.sh
+   docker compose -f docker/docker-compose.yml logs es | grep 'index.search.slowlog'
+
+   curl -s -X PUT 'http://localhost:9200/activities/_settings' \
+     -H 'Content-Type: application/json' \
+     -d '{
+       "index.search.slowlog.threshold.query.trace": "-1",
+       "index.search.slowlog.threshold.fetch.trace": "-1"
+     }'
+   ```
+
+   The `0ms` slow-log threshold records every matching local search. Use it only
+   while troubleshooting this localhost workshop, then reset it to `"-1"`.
+
+10. Inspect the mapping that made the profiled aggregation slow:
+
+    ```bash
+    curl -s 'http://localhost:9200/activities/_mapping?filter_path=*.mappings.properties.username' \
+      | python -m json.tool
+    ```
+
+    Expected evidence:
+
+    ```json
+    "username": {
+      "type": "text",
+      "fielddata": true,
+      "fields": {
+        "keyword": {"type": "keyword"}
+      }
+    }
+    ```
+
+    The aggregation currently targets parent `username`, which loads fielddata
+    for a text field. Change only the `username_distribution` aggregation field
+    in `app/routes/dashboard.py` from `username` to `username.keyword`. No re-index needed: the `username.keyword` subfield already exists in the
+    seeded multi-field mapping.
+
+    Run:
+
+    ```bash
+    pytest -m "not starting_state"
+    ruff check app
+    mypy app
+    ```
+
+    The `starting_state` tests intentionally protect the workshop's pre-fix
+    trap shape. Exclude them only after you have made the participant fix on
+    your branch.
+
+    Restart uvicorn without `--reload`, then run `bash tests/bench.sh` again.
+    The calibration target after fix #2 is `200-500 ms`; local pass/fail is
+    relative improvement plus timer/profile evidence.
+
+    The expected second participant commit is:
+
+    ```text
+    fix: aggregate on username.keyword to avoid fielddata on text field
+    ```
+
+The third trap remains after step 10. Runs 2 and 3 of `bash tests/bench.sh`
+should not show stable request-cache hits yet. Stop here; diagnosing the
+remaining cache behavior belongs to the next Option B step.
+
 ## Scope Guardrails
 
-Option A stops after the single measured N+1 fix. Do not add async/await
+Option A stops after the single measured N+1 fix. Option B steps 9-10 stop
+after the `username.keyword` aggregation fix. Do not add async/await
 refactoring, authentication, frontend work, production deployment steps,
 Elasticsearch cluster operations, reindex strategy drills, vector search, ML
-features, or ESQL.
+features, ESQL, or the later cache fix.
 
 Facilitators can use `reference/option-a-sample-run.md` when a session needs
 troubleshooting support.
