@@ -84,7 +84,7 @@ Direct `pytest` was not installed on PATH. The declared project environment work
   - `uv run pytest -m "not starting_state"` - passed, 11 selected tests.
   - `uv run ruff check app` - passed.
   - `uv run mypy app` - passed.
-  - Cleared local ES request cache, started uvicorn without `--reload`, and ran `bash tests/bench.sh`.
+  - Cleared local ES request cache, started uvicorn without `--reload`, and ran the bench script.
   - Response times: `0.394660s`, `0.151080s`, `0.115679s`.
   - Uvicorn timers showed `count_per_user` at `0.1ms` and cached runs under the target band.
 
