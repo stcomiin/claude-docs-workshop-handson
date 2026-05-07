@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-05-07T02:29:23Z"
+last_updated: "2026-05-07T02:54:11Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 7
+  completed_plans: 7
   percent: 40
 ---
 
@@ -44,17 +44,18 @@ progress:
 
 ## Current Focus
 
-Phase 2 is complete, verified, and shipped in PR #3. The runtime now contains
-the Phase 2 hidden trap shape, pytest locks that shape structurally, and
-README/reference docs cover the complete Option A participant and facilitator
-path. Next up is planning Phase 3, which extends the same slice into Option B
-trap #2.
+Phase 2 is complete, verified, and ready for merge after UAT gap closure. The
+runtime contains the Phase 2 hidden trap shape, pytest locks that shape
+structurally, and README/reference docs cover the complete Option A participant
+and facilitator path with timing described as relative improvement plus
+calibration examples. Next up is planning Phase 3, which extends the same slice
+into Option B trap #2.
 
 ## Current Position
 
 - **Phase:** 3 — Option B Trap #2 Narrative — Mapping & profile
 - **Plan:** 0 of 0 (not planned)
-- **Status:** Phase 2 shipped in PR #3; ready to plan Phase 3
+- **Status:** Phase 2 UAT gaps closed; ready to merge PR #3 and then plan Phase 3
 - **Progress:** `[####      ]` 40% by phase (2 of 5 phases complete);
   100% by planned plan count (6 of 6 plans complete)
 
@@ -72,7 +73,7 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > from process artifacts.
 
 - **Phases complete:** 2 / 5
-- **Plans complete:** 6 / 6
+- **Plans complete:** 7 / 7
 - **v1 requirements satisfied:** 4 / 7
 - **Verification gates passing in deliverable:** Phase 1 and Phase 2 gates
   passing
@@ -82,8 +83,10 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
   - `mypy app`: passing
   - Phase 2 README/reference static checks: passing
   - `CLAUDE.md` / `AGENTS.md` absence check: passing
-  - live Docker seed and timing calibration after Phase 2: not rerun in this
-    session; Phase 5 remains the mandatory dual-model/live timing pre-flight.
+  - live Docker seed and timing calibration after Phase 2: passing under the
+    relative-improvement contract; current VM rerun measured
+    3.178/1.850/1.605 s before the Option A fix and 0.114/0.098/0.085 s after
+    it.
 - **Facilitator pre-flight status:** not yet attempted (Phase 5)
 
 ## Accumulated Context

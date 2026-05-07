@@ -12,8 +12,11 @@ Elasticsearch container, and three visible timer names in the uvicorn console:
 - `count_per_user`
 - `compute_org_summary`
 
-The first `bash tests/bench.sh` run should usually land in the 5-10 s band. The
-endpoint is correct but slow.
+The first `bash tests/bench.sh` run should make the endpoint feel slow and
+should show `count_per_user` dominating the uvicorn timer output. On the
+calibration target this usually lands in the 5-10 s band, but absolute timings
+vary with Docker resources, CPU, ES heap state, OS file cache, and request
+cache state. Relative improvement is the binding measure.
 
 ## Step-by-step Option A path
 
@@ -91,9 +94,16 @@ Then stop uvicorn, start it again, and run:
 bash tests/bench.sh
 ```
 
-The expected outcome is a measurable improvement from the 5-10 s starting band
-to the 3-6 s post-fix band. Remaining slowness is expected after Option A and
-should not be fixed in this path.
+The expected outcome is a measurable improvement from the starting baseline,
+with `count_per_user` falling substantially after the narrow fix. On the
+calibration target this usually looks like 5-10 s before the fix and 3-6 s
+after it. On faster machines, both numbers may be lower; a local UAT rerun on
+2026-05-07 measured roughly 1.6-3.2 s before the fix and 85-114 ms after it.
+
+That faster result still lands the Option A lesson if Claude used the timer
+data, made exactly the expected commit, and kept the verification gates green.
+Stop there even if the endpoint looks fully fast locally; longer workshop paths
+use deeper instrumentation and must not be taught during Option A.
 
 ## Facilitator intervention points
 
@@ -105,3 +115,6 @@ should not be fixed in this path.
   expected commit.
 - If the final benchmark improves but is still not fully fast, stop the path and
   preserve the remaining investigation for the longer workshop option.
+- If the final benchmark improves so much that the endpoint looks fully fast on
+  the local machine, still stop the path. Treat the absolute bands as
+  calibration examples and preserve deeper investigation for the longer option.

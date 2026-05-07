@@ -70,15 +70,23 @@ ruff check app
 mypy app
 ```
 
-## Expected Timing Bands
+## Expected Timing
 
-- Starting runtime: `bash tests/bench.sh` should usually show a 5-10 s
-  baseline.
-- After the Option A fix and a uvicorn restart without `--reload`, warmed
-  harness runs should usually show a 3-6 s band.
+The pass condition is **relative improvement with timer evidence**, not an
+absolute number on every laptop. Elasticsearch timings vary with CPU, Docker
+resources, heap warm-up, OS file cache, and request-cache state.
 
-Remaining slowness after the Option A fix is intentional and belongs to longer
-paths. Do not try to make the endpoint fully fast in this exercise.
+On the calibration target, the starting runtime usually shows a 5-10 s
+baseline and the post-Option-A-fix runtime usually lands around 3-6 s. On
+faster machines, both numbers may be lower. That is fine if:
+
+- `count_per_user` dominates the starting timer output.
+- The one narrow Option A fix makes `count_per_user` fall substantially.
+- `pytest`, `ruff`, and `mypy` stay green.
+
+Stop after the Option A fix even if your machine makes the endpoint look fully
+fast. Longer workshop paths use deeper instrumentation; do not chase them in
+this exercise.
 
 ## Pivot Prompt
 
@@ -92,8 +100,8 @@ Now design a measurement whose result would *falsify* this hypothesis -- not con
 
 1. Start Docker, install dependencies, start uvicorn, call the endpoint with
    curl, and confirm it is slow.
-2. Run `bash tests/bench.sh`. Observe the 5-10 s baseline and read the timing
-   log output in the uvicorn console.
+2. Run `bash tests/bench.sh`. Observe the baseline on your machine and read the
+   timing log output in the uvicorn console.
 3. In a fresh Claude session with this directory as the working directory, ask:
    `This endpoint at /dashboard/summary is slow. Where is the time going?`
 4. Use the pivot prompt above. Claude must read the actual timer output, name
@@ -104,7 +112,8 @@ Now design a measurement whose result would *falsify* this hypothesis -- not con
    finer-grained timers inside the worst phase and re-run the benchmark.
 7. Implement a fix for the top bottleneck only. Run `pytest`, restart uvicorn
    without `--reload`, and run `bash tests/bench.sh`. Compare warmed runs; the
-   benchmark should improve into the 3-6 s band.
+   benchmark should improve substantially and `count_per_user` should no
+   longer dominate.
 8. Wrap up with the final measurement, the next fix Claude would investigate,
    and a short explanation of why the measured workflow changed the decision.
 

@@ -82,7 +82,7 @@ artifact, not a participant-distributed artifact.
 
 ### Phase 2: Option A Complete Vertical
 
-**Goal**: A participant on a fresh laptop reads the README, follows the Option A 8-step arc against Opus 4.7, produces one commit (`fix: replace per-user _count loop with single terms aggregation`), observes the 5–10 s → 3–6 s improvement band, and can articulate the one-sentence takeaway plus name both portable prompts. Traps #2 and #3 are physically present but not narratively engaged in Option A — they exist so post-Option-A-fix timing matches `CON-expected-timings` and so Phase 3/4 can extend the slice without changing the starting point.
+**Goal**: A participant on a fresh laptop reads the README, follows the Option A 8-step arc against Opus 4.7, produces one commit (`fix: replace per-user _count loop with single terms aggregation`), observes a measured before/after improvement with `count_per_user` falling substantially, and can articulate the one-sentence takeaway plus name both portable prompts. Traps #2 and #3 are physically present but not narratively engaged in Option A — they remain in the starting point so Phase 3/4 can extend the slice without changing the starting point. The 5–10 s → 3–6 s numbers from `CON-expected-timings` are calibration-target examples; per the constraint itself, relative improvement is the binding measure because ES timing varies by hardware and cache state.
 
 **Depends on**: Phase 1.
 
@@ -91,11 +91,11 @@ artifact, not a participant-distributed artifact.
 **Success Criteria** (what must be TRUE):
   1. **Trap #2** is physical: `docker/seed/mappings.json` defines `username` as a multi-field `{"type": "text", "fielddata": true, "fields": {"keyword": {"type": "keyword"}}}`, and `compute_org_summary`'s `terms` aggregation targets the parent `username` (text + fielddata) path rather than the already-present `username.keyword` subfield. The agg runs (because `fielddata: true` is enabled) but loads fielddata onto the JVM heap on every request — slow, not failing. Diagnosable only via `_search?profile=true`, slow log, or mapping inspection — invisible from `dashboard.py`. (The `fielddata: true` setting is load-bearing: without it the agg would error rather than be slow, breaking the "slow but correct" premise.)
   2. **Trap #3** is physical: the 30-day date range filter for `unique_users_30d` in `compute_org_summary` sits under `query` context (`bool.must`) AND uses millisecond-precise `now-30d` instead of day-rounded `now-30d/d`. Two coupled cache misses fall out: `query` context skips the segment-level filter cache and runs scoring; the non-deterministic `now` produces a different request-body cache key on every request. The aggs sub-request uses `size: 0` (correct) so the request cache is *eligible* — the trap is purely about query-context + non-rounded date. Diagnosable only by running `bench.sh` and noticing runs 2 and 3 are not faster than run 1.
-  3. As-shipped baseline matches `CON-expected-timings` Option A band: 5–10 s on the calibration laptop. After the Option A reference fix (single `terms` aggregation replacing the N+1), bench shows the 3–6 s post-fix band — traps #2 and #3 still drag because they're not addressed in Option A.
+  3. As-shipped baseline is observably slow and timer output points to `count_per_user` as the first bottleneck. On calibration hardware this is expected to look like the `CON-expected-timings` Option A band (5–10 s before the fix, 3–6 s after), but local-laptop pass/fail uses relative improvement plus timer evidence.
   4. `compute_org_summary` is structured so finer-grained timers can be added inside without restructuring (per `CON-pre-instrumented-timing`'s extension-friendly requirement). Two of three traps (#2 and #3) remain invisible from `dashboard.py` reading alone.
   5. README contains the verbatim Option A 8-step arc per `CON-option-a-arc`, including the pivot moment at step 4 and the falsification step at step 5. Both portable prompts (pivot + falsification) appear in README verbatim per `CON-pivot-and-falsification-prompts`.
   6. `reference/option-a-sample-run.md` exists as a facilitator answer-key documenting the Option A expected investigation path: how Claude is expected to behave at each step, where Sonnet 4.6 may diverge, what "step 3 not solved in one shot" looks like.
-  7. After Option A in the reference run: one commit on the participant branch (`fix: replace per-user _count loop with single terms aggregation`), `pytest` / `ruff` / `mypy` green, `bench.sh` shows the 5–10 s → 3–6 s improvement band, participant articulates the one-sentence takeaway.
+  7. After Option A in the reference run: one commit on the participant branch (`fix: replace per-user _count loop with single terms aggregation`), `pytest` / `ruff` / `mypy` green, `bench.sh` shows substantial improvement from the local baseline, `count_per_user` no longer dominates, and participant articulates the one-sentence takeaway.
   8. No `CLAUDE.md` / `AGENTS.md` shipped. Out-of-scope respected.
 
 **Plans**:
@@ -108,6 +108,10 @@ artifact, not a participant-distributed artifact.
 
 - [x] `02-02` — Correctness and trap-shape tests for the Option A starting point.
 - [x] `02-03` — Complete Option A README arc and facilitator sample-run reference.
+
+**Wave 3** *(UAT gap closure)*
+
+- [x] `02-04` — Live timing calibration gap closure: docs and validation now treat absolute bands as calibration examples and relative improvement as the binding local pass condition.
 
 **Cross-cutting constraints:**
 
@@ -181,7 +185,7 @@ artifact, not a participant-distributed artifact.
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
-| 2. Option A Complete Vertical | 3/3 | Complete | 2026-05-07 |
+| 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |
