@@ -210,8 +210,27 @@ def test_phase3_readme_documents_profile_slow_log_and_keyword_fix() -> None:
     assert 'pytest -m "not starting_state"' in readme
     assert "fix: aggregate on username.keyword to avoid fielddata on text field" in readme
     assert "200-500 ms" in readme
-    assert "fix: move date range to filter context, round now to day for cache hit" not in readme
-    assert "now-30d/d" not in readme
+
+
+def test_phase4_readme_documents_trap3_primer_appendix_and_closing() -> None:
+    readme = project_file("README.md").read_text(encoding="utf-8")
+
+    assert "## Elasticsearch Query DSL Primer" in readme
+    assert "bool.filter" in readme
+    assert "aggs.date_histogram" in readme
+    assert "Option B: steps 11-12" in readme
+    assert (
+        "fix: move date range to filter context, round now to day for cache hit"
+        in readme
+    )
+    assert "now-30d/d" in readme
+    assert "50-150 ms cached / 200-400 ms cold" in readme
+    assert "## Closing Lesson" in readme
+    assert "Prove that hypothesis with data" in readme
+    assert "## Appendix B: Translate To Your World" in readme
+    assert "Postgres / SQL" in readme
+    assert "MongoDB" in readme
+    assert "Spark / Trino / dbt" in readme
 
 
 def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
@@ -231,11 +250,41 @@ def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
     assert "Trap #3 remains" in reference
     assert "request-cache hits" in reference
     assert "fix: aggregate on username.keyword to avoid fielddata on text field" in reference
+
+
+def test_phase4_reference_documents_trap3_and_failure_modes() -> None:
+    reference = project_file("reference/option-a-sample-run.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "Option B steps 11-12" in reference
+    assert "Expected trap #3 investigation path" in reference
+    assert "Completed dashboard.py comment example" in reference
     assert (
         "fix: move date range to filter context, round now to day for cache hit"
-        not in reference
+        in reference
     )
-    assert "now-30d/d" not in reference
+    assert "## Failure-mode runbook" in reference
+    assert "Claude finds the cause too fast" in reference
+    assert "Fix does not measurably help" in reference
+    assert "Bench numbers do not change" in reference
+    assert "Docker image will not start or ES is not green/yellow" in reference
+    assert "Warm request cache masks trap #3" in reference
+
+
+def test_phase4_dashboard_has_non_spoiler_final_notes_template() -> None:
+    dashboard_source = project_file("app/routes/dashboard.py").read_text(
+        encoding="utf-8"
+    )
+    header = "\n".join(dashboard_source.splitlines()[:30])
+
+    assert "Final Option B notes" in header
+    assert "username.keyword" not in header
+    assert "now-30d/d" not in header
+    assert (
+        "fix: move date range to filter context, round now to day for cache hit"
+        not in header
+    )
 
 
 def test_phase3_no_agent_instruction_files_ship() -> None:
