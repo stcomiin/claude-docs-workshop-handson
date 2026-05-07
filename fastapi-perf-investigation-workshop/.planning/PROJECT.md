@@ -29,11 +29,12 @@ statistical correctness).
 
 ## Current Focus
 
-Phase 3 UAT found executable-command gaps in the Option B steps 9-10 path.
-The profile evidence command must use the Elasticsearch 9.3.3-compatible
-`"profile": true` request-body form, and participant post-fix verification must
-stop conflicting with the shipped pre-fix trap-shape test. Plan `03-04` is ready
-to close those gaps before Phase 4.
+Phase 3 gap closure is complete. The workshop now covers Option A plus Option B
+steps 9-10 with a live-tested Profile API request-body command, slow-log
+evidence path, mapping inspection, and a participant post-fix verification
+command that does not conflict with shipped pre-fix trap-shape guards. Phase 4
+is next: trap #3, the ES DSL primer, Appendix B, closing-slide restatement, and
+the full facilitator runbook.
 
 ## Constraints (binding)
 

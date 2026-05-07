@@ -41,7 +41,7 @@ artifact, not a participant-distributed artifact.
 
 - [x] **Phase 1: Tracer Slice — Workshop Motion End-to-End** — full directory layout stubbed, 50k seed, trap #1 (visible N+1) only, three timer blocks, 4 pytest tests, 3-run bench, README stub with the pivot prompt, and a 10-minute facilitator walkthrough that proves the motion on Mac/Windows/Linux.
 - [x] **Phase 2: Option A Complete Vertical** — traps #2 and #3 added physically (not narratively engaged), full Option A 8-step arc in README, falsification prompt, Option A entry in `reference/option-a-sample-run.md`. After this phase, a participant can run Option A end-to-end against Opus 4.7 and walk away with the takeaway.
-- [ ] **Phase 3: Option B Trap #2 Narrative — Mapping & `_search?profile=true`** — Option B steps 9-10 in README, mapping-inspection arc, `_search?profile=true` / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed. UAT found executable-command gaps; `03-04` is planned.
+- [x] **Phase 3: Option B Trap #2 Narrative — Mapping & Profile API** — Option B steps 9-10 in README, mapping-inspection arc, Profile API / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed. (completed 2026-05-07)
 - [ ] **Phase 4: Option B Trap #3 + Workshop Polish** — Option B steps 11-12, comment block instruction at top of `dashboard.py`, ES DSL primer, Appendix B translate-to-your-world, closing-slide stack-agnostic restatement, all 5 failure-mode runbook entries. Post-fix-3 band (50–150 ms cached / 200–400 ms cold) confirmed.
 - [ ] **Phase 5: Dual-Model Pre-Flight Validation** — 24-hour pre-flight against Opus 4.7 (target) and Sonnet 4.6 (fallback) on a fresh clone with the published image; all 5 failure-mode runbook entries either non-triggering or recoverable.
 
@@ -89,7 +89,7 @@ artifact, not a participant-distributed artifact.
 **Requirements**: REQ-measured-fix-option-a, REQ-investigation-discipline-takeaway.
 
 **Success Criteria** (what must be TRUE):
-  1. **Trap #2** is physical: `docker/seed/mappings.json` defines `username` as a multi-field `{"type": "text", "fielddata": true, "fields": {"keyword": {"type": "keyword"}}}`, and `compute_org_summary`'s `terms` aggregation targets the parent `username` (text + fielddata) path rather than the already-present `username.keyword` subfield. The agg runs (because `fielddata: true` is enabled) but loads fielddata onto the JVM heap on every request — slow, not failing. Diagnosable only via `_search?profile=true`, slow log, or mapping inspection — invisible from `dashboard.py`. (The `fielddata: true` setting is load-bearing: without it the agg would error rather than be slow, breaking the "slow but correct" premise.)
+  1. **Trap #2** is physical: `docker/seed/mappings.json` defines `username` as a multi-field `{"type": "text", "fielddata": true, "fields": {"keyword": {"type": "keyword"}}}`, and `compute_org_summary`'s `terms` aggregation targets the parent `username` (text + fielddata) path rather than the already-present `username.keyword` subfield. The agg runs (because `fielddata: true` is enabled) but loads fielddata onto the JVM heap on every request — slow, not failing. Diagnosable only via the Elasticsearch Profile API, slow log, or mapping inspection — invisible from `dashboard.py`. (The `fielddata: true` setting is load-bearing: without it the agg would error rather than be slow, breaking the "slow but correct" premise.)
   2. **Trap #3** is physical: the 30-day date range filter for `unique_users_30d` in `compute_org_summary` sits under `query` context (`bool.must`) AND uses millisecond-precise `now-30d` instead of day-rounded `now-30d/d`. Two coupled cache misses fall out: `query` context skips the segment-level filter cache and runs scoring; the non-deterministic `now` produces a different request-body cache key on every request. The aggs sub-request uses `size: 0` (correct) so the request cache is *eligible* — the trap is purely about query-context + non-rounded date. Diagnosable only by running `bench.sh` and noticing runs 2 and 3 are not faster than run 1.
   3. As-shipped baseline is observably slow and timer output points to `count_per_user` as the first bottleneck. On calibration hardware this is expected to look like the `CON-expected-timings` Option A band (5–10 s before the fix, 3–6 s after), but local-laptop pass/fail uses relative improvement plus timer evidence.
   4. `compute_org_summary` is structured so finer-grained timers can be added inside without restructuring (per `CON-pre-instrumented-timing`'s extension-friendly requirement). Two of three traps (#2 and #3) remain invisible from `dashboard.py` reading alone.
@@ -121,17 +121,17 @@ artifact, not a participant-distributed artifact.
 
 ---
 
-### Phase 3: Option B Trap #2 Narrative — Mapping & `_search?profile=true`
+### Phase 3: Option B Trap #2 Narrative — Mapping & Profile API
 
-**Goal**: A participant who has just completed Option A can continue into Option B steps 9–10, diagnose trap #2 (text-mapped `username` aggregation) via `_search?profile=true` or the slow log, apply the mapping fix as commit 2 (`fix: aggregate on username.keyword to avoid fielddata on text field`), and observe the 200–500 ms post-fix-2 timing band per `CON-expected-timings`. Trap #3 is still in place — that's Phase 4.
+**Goal**: A participant who has just completed Option A can continue into Option B steps 9–10, diagnose trap #2 (text-mapped `username` aggregation) via the Elasticsearch Profile API or the slow log, apply the mapping fix as commit 2 (`fix: aggregate on username.keyword to avoid fielddata on text field`), and observe the 200–500 ms post-fix-2 timing band per `CON-expected-timings`. Trap #3 is still in place — that's Phase 4.
 
 **Depends on**: Phase 2.
 
-**Requirements**: REQ-investigation-uses-instrumentation (this phase brings it to full satisfaction by adding the `_search?profile=true` / slow log step from Option B step 9).
+**Requirements**: REQ-investigation-uses-instrumentation (this phase brings it to full satisfaction by adding the Elasticsearch Profile API / slow log step from Option B step 9).
 
 **Success Criteria** (what must be TRUE):
-  1. README contains the verbatim Option B steps 9 and 10 per `CON-option-b-arc`: re-measure after fix #1, dominant cost shifts to `compute_org_summary`, Claude investigates via `_search?profile=true` or slow log, profile reveals fielddata loading on `username`, mapping inspection finds `username` mapped as `text` with `fielddata: true` AND a `username.keyword` subfield already present in the multi-field, Claude switches the aggregation from `username` to `username.keyword` (no re-index needed because the subfield already exists), participant re-measures.
-  2. README documents how to enable the ES slow log and how to run `_search?profile=true` against the running container. These instructions are part of the workshop's instrumentation discussion, not a separate appendix.
+  1. README contains the verbatim Option B steps 9 and 10 per `CON-option-b-arc`: re-measure after fix #1, dominant cost shifts to `compute_org_summary`, Claude investigates via the Elasticsearch Profile API or slow log, profile reveals fielddata loading on `username`, mapping inspection finds `username` mapped as `text` with `fielddata: true` AND a `username.keyword` subfield already present in the multi-field, Claude switches the aggregation from `username` to `username.keyword` (no re-index needed because the subfield already exists), participant re-measures.
+  2. README documents how to enable the ES slow log and how to run the Profile API request against the running container. These instructions are part of the workshop's instrumentation discussion, not a separate appendix.
   3. `reference/option-a-sample-run.md` (renamed or extended as appropriate) documents the Option B trap #2 expected investigation path: profile/slow-log reveals fielddata loading on `username`; mapping inspection reveals `username` as `text + fielddata: true` with the `keyword` subfield already exposed in the multi-field; the canonical fix is to switch the aggregation to `username.keyword` — no re-index needed because the subfield already exists. Post-fix-2 expected timing band: 200–500 ms.
   4. After Option B steps 9-10 in the reference run: a second commit on the participant branch (`fix: aggregate on username.keyword to avoid fielddata on text field`), `pytest` / `ruff` / `mypy` green, `bench.sh` shows the 200–500 ms post-fix-2 band.
   5. Trap #3 (`query` context + non-rounded `now-30d`) is still physically present; post-fix-2 bench runs do not yet exhibit request-cache hits between runs 1, 2, 3.
@@ -140,7 +140,7 @@ artifact, not a participant-distributed artifact.
 
 **Wave 1**
 
-- [x] `03-01` — README Option B steps 9-10, `_search?profile=true`, slow-log, mapping inspection, and trap #2 stop condition.
+- [x] `03-01` — README Option B steps 9-10, Profile API, slow-log, mapping inspection, and trap #2 stop condition.
 - [x] `03-02` — Facilitator reference extension for the Option B trap #2 expected path, model divergence, commit 2, and trap #3 boundary.
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -149,7 +149,7 @@ artifact, not a participant-distributed artifact.
 
 **Wave 3** *(UAT gap closure)*
 
-- [ ] `03-04` — Fix profile command syntax and resolve participant post-fix pytest conflict found by UAT.
+- [x] `03-04` — Fix profile command syntax and resolve participant post-fix pytest conflict found by UAT.
 
 **Cross-cutting constraints:**
 
@@ -206,6 +206,6 @@ artifact, not a participant-distributed artifact.
 |-------|----------------|--------|-----------|
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
-| 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 3/4 | UAT gaps found | - |
+| 3. Option B Trap #2 Narrative — Mapping & Profile API | 4/4 | Complete | 2026-05-07 |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |

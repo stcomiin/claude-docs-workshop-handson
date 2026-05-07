@@ -88,13 +88,13 @@
   *adding* instrumentation rather than guessing. The exercise forces use of
   the pre-instrumented timer output, then addition of finer-grained timers
   inside the dominant phase, then enabling ES-specific instrumentation
-  (`_search?profile=true` and slow log) for traps #2 and #3.
+  (Elasticsearch Profile API and slow log) for traps #2 and #3.
 - **Acceptance criteria:**
   - In step 4 of Option A, Claude has actually read the timer log output from
     the uvicorn console (verified by the participant via the pivot prompt).
   - In step 6 of Option A (when granularity insufficient), Claude has added
     finer-grained timers inside the dominant phase.
-  - In step 9 of Option B, Claude has enabled `_search?profile=true` or the
+  - In step 9 of Option B, Claude has used the Profile API or the
     slow log.
 
 ### REQ-no-out-of-scope-drift
@@ -126,7 +126,7 @@ form of the workshop end-to-end). Partial-satisfaction phases are noted in the
 | REQ-correctness-preserved | Phase 1 | (maintained in 2/3/4) | Complete |
 | REQ-measured-fix-option-a | Phase 2 | — | Complete |
 | REQ-investigation-discipline-takeaway | Phase 2 | (closing-slide restatement in Phase 4) | Complete |
-| REQ-investigation-uses-instrumentation | Phase 3 | Phase 2 (timer log read + finer-grained timers added) | Pending |
+| REQ-investigation-uses-instrumentation | Phase 3 | Phase 2 (timer log read + finer-grained timers added) | Complete |
 | REQ-measured-fix-option-b | Phase 4 | Phase 3 (commits 1+2 path enabled) | Pending |
 | REQ-portable-prompt-artifacts | Phase 4 | Phase 1 (pivot prompt verbatim), Phase 2 (falsification prompt verbatim) | Pending |
 
