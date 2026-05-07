@@ -181,10 +181,10 @@ artifact, not a participant-distributed artifact.
 
 **Wave 1**
 
-- [ ] `04-01` — Participant README trap #3 flow, ES DSL primer, Appendix B,
-  closing restatement, and non-spoiler dashboard note template.
-- [ ] `04-02` — Facilitator reference trap #3 path, completed comment example,
-  model guidance, and failure-mode runbook.
+- [x] `04-01` — Participant README trap #3 flow, ES DSL primer, Appendix B,
+  closing restatement, and non-spoiler dashboard note template. (completed 2026-05-07)
+- [x] `04-02` — Facilitator reference trap #3 path, completed comment example,
+  model guidance, and failure-mode runbook. (completed 2026-05-07)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -219,5 +219,5 @@ artifact, not a participant-distributed artifact.
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
 | 3. Option B Trap #2 Narrative — Mapping & Profile API | 4/4 | Complete | 2026-05-07 |
-| 4. Option B Trap #3 + Workshop Polish | 0/3 | Planned | - |
+| 4. Option B Trap #3 + Workshop Polish | 3/3 | Complete | 2026-05-07 |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |
