@@ -88,6 +88,26 @@ Stop after the Option A fix even if your machine makes the endpoint look fully
 fast. Longer workshop paths use deeper instrumentation; do not chase them in
 this exercise.
 
+## Elasticsearch Query DSL Primer
+
+You only need the Elasticsearch Query DSL pieces used in this workshop:
+
+| DSL piece | What it means here |
+|---|---|
+| `term` | Match one exact value, such as one `user_id`. |
+| `terms` | Match or aggregate many exact values, such as the top users by ID. |
+| `range` | Match values inside a boundary, such as `created_at` over the last 30 days. |
+| `match_all` | Match every document; useful as a neutral baseline. |
+| `bool.must` | Require a clause and include it in query/scoring context. |
+| `bool.filter` | Require a yes/no clause without scoring; this is the right home for cacheable constraints. |
+| `aggs.terms` | Group documents by a field and count the buckets. |
+| `aggs.date_histogram` | Group documents into time buckets. |
+
+For this exercise, the important distinction is `bool.must` vs `bool.filter`.
+The final Option B step is about a date constraint that does not need scoring.
+Moving that constraint to filter context is part of making repeated requests
+eligible for cache behavior you can measure.
+
 ## Pivot Prompt
 
 Prove that hypothesis with data. Run `bash tests/bench.sh`, then read the timing log output from the uvicorn console. Tell me which named timer block dominates the wall-clock time, and quote the numbers verbatim. Only after you have the numbers, propose the fix.
