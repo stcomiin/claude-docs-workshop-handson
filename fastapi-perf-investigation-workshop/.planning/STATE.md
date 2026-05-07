@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-last_updated: "2026-05-07T00:02:23.396Z"
+status: planning
+last_updated: "2026-05-07T00:16:23Z"
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 3
-  percent: 50
+  completed_plans: 6
+  percent: 40
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -44,23 +44,22 @@ progress:
 
 ## Current Focus
 
-Roadmap restructured from horizontal layering (docker → app → tests → docs →
-preflight) to **tracer-bullet vertical slices** (motion → Option A → Option B
-trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 is
-complete and verified. Phase 2 is now planned with three executable plans for
-the complete Option A vertical slice. Next up is executing Phase 2.
+Phase 2 is complete and verified. The runtime now contains the Phase 2 hidden
+trap shape, pytest locks that shape structurally, and README/reference docs
+cover the complete Option A participant and facilitator path. Next up is
+planning Phase 3, which extends the same slice into Option B trap #2.
 
 ## Current Position
 
-- **Phase:** 2 — Option A Complete Vertical
-- **Plan:** 0 of 3 (planned)
-- **Status:** Ready to execute
-- **Progress:** `[##        ]` 20% by phase (1 of 5 phases complete);
-  50% by plan count (3 of 6 plans complete)
+- **Phase:** 3 — Option B Trap #2 Narrative — Mapping & profile
+- **Plan:** 0 of 0 (not planned)
+- **Status:** Ready to plan Phase 3
+- **Progress:** `[####      ]` 40% by phase (2 of 5 phases complete);
+  100% by planned plan count (6 of 6 plans complete)
 
 ```
 Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
-Phase 2: Option A Complete Vertical                           [          ] Ready to execute (0/3 plans)
+Phase 2: Option A Complete Vertical                           [##########] Complete (3/3 plans)
 Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
 Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not started
@@ -71,17 +70,19 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > Updated as phases complete. Metrics are observable from the deliverable, not
 > from process artifacts.
 
-- **Phases complete:** 1 / 5
-- **Plans complete:** 3 / 6
-- **v1 requirements satisfied:** 2 / 7
-- **Verification gates passing in deliverable:** Phase 1 gates passing
+- **Phases complete:** 2 / 5
+- **Plans complete:** 6 / 6
+- **v1 requirements satisfied:** 4 / 7
+- **Verification gates passing in deliverable:** Phase 1 and Phase 2 gates
+  passing
   - `docker compose -f docker/docker-compose.yml config`: passing
-  - live Docker seed smoke: passing (`activities/_count` returned 50000)
-  - live `GET /dashboard/summary`: passing with exactly three timer lines
-  - `pytest`: passing (4 tests)
-  - `bash tests/bench.sh`: passing
-  - `ruff check app`: passing
+  - `pytest`: passing (6 tests)
+  - `ruff check app tests/test_dashboard.py`: passing
   - `mypy app`: passing
+  - Phase 2 README/reference static checks: passing
+  - `CLAUDE.md` / `AGENTS.md` absence check: passing
+  - live Docker seed and timing calibration after Phase 2: not rerun in this
+    session; Phase 5 remains the mandatory dual-model/live timing pre-flight.
 - **Facilitator pre-flight status:** not yet attempted (Phase 5)
 
 ## Accumulated Context
@@ -118,9 +119,8 @@ Active to monitor in later phases:
 
 - Opus 4.7 vs Sonnet 4.6 behaviour split → Phase 5 validates both.
 - Seed data small enough that ES caches everything and traps don't surface →
-  Phase 2 must tune seed size and refresh behavior so traps #2 and #3 are
-  observable on laptop-class hardware once they're added on top of Phase 1's
-  tracer baseline.
+  Phase 2 added the intended trap shape; Phase 5 must calibrate live timings on
+  the published image and target hardware.
 
 - Three-terminal setup overwhelming small screens → README setup section
   established in Phase 1 (stub) and finalized as the polished version through
@@ -133,6 +133,26 @@ Active to monitor in later phases:
 ## Session Continuity
 
 ### What just happened (this session)
+
+- Planned Phase 2 with three executable plans under
+  `.planning/phases/02-option-a-complete-vertical/`: runtime hidden traps
+  (`02-01`), trap-shape tests (`02-02`), and Option A docs/reference (`02-03`).
+  Research, validation, and pattern-map artifacts were created for the phase.
+
+- Executed all three Phase 2 plans. Runtime work added the Phase 2 username
+  mapping, stale-mapping reseed guard, and `compute_org_summary` trap shape.
+  Test work expanded `tests/test_dashboard.py` to six tests and locked the
+  mapping/query shape. Docs work replaced the tracer README/reference with the
+  complete Option A arc and facilitator answer key.
+
+- Verification passed: `uv run pytest -q`, `uv run ruff check app
+  tests/test_dashboard.py`, `uv run mypy app`, Phase 2 doc greps,
+  `test ! -f CLAUDE.md && test ! -f AGENTS.md`, and Docker Compose config.
+
+- Completed Phase 2 traceability updates in `ROADMAP.md`, `REQUIREMENTS.md`,
+  and `STATE.md`.
+
+### Prior planning history
 
 - Planned Phase 1 with three executable wave-based plans under
   `.planning/phases/01-tracer-slice-workshop-motion-end-to-end/`: Docker/seed
@@ -195,12 +215,10 @@ Active to monitor in later phases:
 
 ### What happens next (next session)
 
-- Execute Phase 2: `/gsd-execute-phase 2 --auto` (Option A Complete Vertical).
+- Plan Phase 3: `/gsd-plan-phase 3 --auto` (Option B Trap #2 Narrative).
 
-- Phase 2 execution should preserve the Phase 1 tracer runtime, add traps #2
-  and #3 physically, extend tests to lock the trap shape, and complete the full
-  Option A README/reference path while keeping hidden fixes out of the Option A
-  narrative.
+- Phase 3 should extend the existing Option A slice with the mapping/profile
+  investigation path for Option B steps 9-10, while leaving trap #3 for Phase 4.
 
 ### Files to keep in working memory
 

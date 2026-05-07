@@ -40,7 +40,7 @@ artifact, not a participant-distributed artifact.
 ## Phases
 
 - [x] **Phase 1: Tracer Slice — Workshop Motion End-to-End** — full directory layout stubbed, 50k seed, trap #1 (visible N+1) only, three timer blocks, 4 pytest tests, 3-run bench, README stub with the pivot prompt, and a 10-minute facilitator walkthrough that proves the motion on Mac/Windows/Linux.
-- [ ] **Phase 2: Option A Complete Vertical** — traps #2 and #3 added physically (not narratively engaged), full Option A 8-step arc in README, falsification prompt, Option A entry in `reference/option-a-sample-run.md`. After this phase, a participant can run Option A end-to-end against Opus 4.7 and walk away with the takeaway.
+- [x] **Phase 2: Option A Complete Vertical** — traps #2 and #3 added physically (not narratively engaged), full Option A 8-step arc in README, falsification prompt, Option A entry in `reference/option-a-sample-run.md`. After this phase, a participant can run Option A end-to-end against Opus 4.7 and walk away with the takeaway.
 - [ ] **Phase 3: Option B Trap #2 Narrative — Mapping & `_search?profile=true`** — Option B steps 9-10 in README, mapping-inspection arc, `_search?profile=true` / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed.
 - [ ] **Phase 4: Option B Trap #3 + Workshop Polish** — Option B steps 11-12, comment block instruction at top of `dashboard.py`, ES DSL primer, Appendix B translate-to-your-world, closing-slide stack-agnostic restatement, all 5 failure-mode runbook entries. Post-fix-3 band (50–150 ms cached / 200–400 ms cold) confirmed.
 - [ ] **Phase 5: Dual-Model Pre-Flight Validation** — 24-hour pre-flight against Opus 4.7 (target) and Sonnet 4.6 (fallback) on a fresh clone with the published image; all 5 failure-mode runbook entries either non-triggering or recoverable.
@@ -102,12 +102,12 @@ artifact, not a participant-distributed artifact.
 
 **Wave 1**
 
-- [ ] `02-01` — Runtime hidden traps: Phase 2 username mapping, stale-mapping reseed logic, and `compute_org_summary` query/cache trap shape.
+- [x] `02-01` — Runtime hidden traps: Phase 2 username mapping, stale-mapping reseed logic, and `compute_org_summary` query/cache trap shape.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] `02-02` — Correctness and trap-shape tests for the Option A starting point.
-- [ ] `02-03` — Complete Option A README arc and facilitator sample-run reference.
+- [x] `02-02` — Correctness and trap-shape tests for the Option A starting point.
+- [x] `02-03` — Complete Option A README arc and facilitator sample-run reference.
 
 **Cross-cutting constraints:**
 
@@ -181,7 +181,7 @@ artifact, not a participant-distributed artifact.
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
-| 2. Option A Complete Vertical | 0/3 | Planned | - |
+| 2. Option A Complete Vertical | 3/3 | Complete | 2026-05-07 |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |
