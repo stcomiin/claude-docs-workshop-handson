@@ -315,3 +315,33 @@ Claude may keep reading Python code after commit 2 because the remaining issue
 is easy to mistake for application overhead. Keep the session on repeated-run
 evidence and Elasticsearch cache behavior until the model explains both the
 query-context problem and the moving `now` range key.
+
+Opus 4.7 should usually follow the cache-evidence prompt, inspect repeated
+request behavior, and identify the paired `bool.filter` plus rounded-date
+change. Sonnet 4.6 may over-focus on code-reading, async/await, sharding,
+general cache tuning, or broad Elasticsearch advice. Do not accept the trap #3
+diagnosis until the model provides quoted cache evidence and explains why the
+two-part fix is necessary.
+
+Reject async/await rewrites, sharding work, auth changes, frontend changes,
+reindex drills, vector search, ML, ESQL, and broad rewrites during this step.
+The only accepted code change is the cache-friendly range query.
+
+### Completed dashboard.py comment example
+
+After the participant finishes the full Option B path, the non-spoiler comment
+template at the top of `app/routes/dashboard.py` can be filled in like this:
+
+```python
+# Final Option B notes (fill in after completing the exercise):
+# - Fix 1 before/after evidence:
+#   fix: replace per-user _count loop with single terms aggregation
+# - Fix 2 before/after evidence:
+#   fix: aggregate on username.keyword to avoid fielddata on text field
+# - Fix 3 before/after evidence:
+#   fix: move date range to filter context, round now to day for cache hit
+```
+
+Keep the filled example out of the shipped starting branch. It belongs in the
+facilitator reference or in a participant's completed branch after the measured
+work is done.
