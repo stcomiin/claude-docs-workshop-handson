@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_to_plan
-last_updated: "2026-05-07T08:37:04Z"
+last_updated: "2026-05-07T09:04:59Z"
 progress:
   total_phases: 5
   completed_phases: 3
@@ -44,10 +44,11 @@ progress:
 
 ## Current Focus
 
-Phase 3 gap closure is complete. The deliverable now extends the existing
-Option A slice into Option B trap #2 with live-tested Profile API guidance,
-slow-log guidance, facilitator reference coverage, and post-fix verification
-that excludes shipped pre-fix trap-shape guards when appropriate.
+Phase 3 gap closure is complete and shipped as PR #4. The deliverable now
+extends the existing Option A slice into Option B trap #2 with live-tested
+Profile API guidance, slow-log guidance, facilitator reference coverage, and
+post-fix verification that excludes shipped pre-fix trap-shape guards when
+appropriate. Phase 4 is ready to plan.
 
 ## Current Position
 
@@ -165,6 +166,14 @@ Active to monitor in later phases:
   tests/test_dashboard.py`, `uv run mypy app`, Phase 2 README/reference static
   checks, `CLAUDE.md` / `AGENTS.md` absence checks, and
   `docker compose -f docker/docker-compose.yml config`.
+
+- Shipped Phase 3 by pushing branch
+  `feat/fastapi-perf-workshop-phase-3-option-b-trap-2` and opening PR #4:
+  https://github.com/stcomiin/claude-docs-workshop-handson/pull/4. Phase 3
+  verification had passed with `uv run pytest`, `uv run ruff check app
+  tests/test_dashboard.py`, `uv run mypy app`, live Profile API verification,
+  slow-log enable/reset verification, and the detached post-fix
+  `uv run pytest -m "not starting_state"` gate.
 
 ### Prior planning history
 
