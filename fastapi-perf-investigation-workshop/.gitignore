@@ -3,10 +3,12 @@ __pycache__/
 
 .venv/
 venv/
+*.egg-info/
 
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+uv.lock
 
 .env
 .env.*

@@ -67,9 +67,24 @@ def _count_from_response(response: Any) -> int:
     return int(_json_dict(response).get("count", 0))
 
 
+def _growth_rate(total_30d: int, prior_total: int) -> float:
+    if prior_total > 0:
+        return round((total_30d - prior_total) / prior_total, 4)
+    if total_30d > 0:
+        return 1.0
+    return 0.0
+
+
 def list_top_users(es: ActivitiesEsClient, limit: int = 10) -> list[TopUser]:
     body: JsonDict = {
         "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {"range": {"created_at": {"gte": "now-30d/d", "lt": "now/d"}}}
+                ]
+            }
+        },
         "aggs": {
             "top_users": {
                 "terms": {
@@ -178,12 +193,11 @@ def compute_org_summary(es: ActivitiesEsClient) -> OrgSummary:
 
     total_30d = int(last_30d.get("doc_count", 0))
     prior_total = int(prior_30d.get("doc_count", 0))
-    raw_growth = (total_30d - prior_total) / prior_total if prior_total else 0.0
 
     return {
         "total_activities_30d": total_30d,
         "unique_users_30d": int(unique_users.get("value", 0)),
-        "growth_rate_vs_prior_30d": round(max(raw_growth, 0.0), 4),
+        "growth_rate_vs_prior_30d": _growth_rate(total_30d, prior_total),
     }
 
 
