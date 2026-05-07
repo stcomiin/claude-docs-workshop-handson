@@ -177,7 +177,19 @@ artifact, not a participant-distributed artifact.
   6. `reference/option-a-sample-run.md` contains all 5 failure-mode runbook entries from `CON-facilitator-preflight`: (a) Claude finds the cause too fast, (b) fix doesn't measurably help, (c) bench numbers don't change, (d) Docker image won't start / cluster doesn't reach green/yellow, (e) ES request cache warm from prior bench masking trap #3.
   7. The deliverable contains no `CLAUDE.md` / `AGENTS.md` (`CON-no-claude-md-shipped`); nothing in README or sample run drills into out-of-scope topics (`CON-out-of-scope`).
 
-**Plans**: TBD.
+**Plans**:
+
+**Wave 1**
+
+- [ ] `04-01` — Participant README trap #3 flow, ES DSL primer, Appendix B,
+  closing restatement, and non-spoiler dashboard note template.
+- [ ] `04-02` — Facilitator reference trap #3 path, completed comment example,
+  model guidance, and failure-mode runbook.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] `04-03` — Phase 4 static tests, starting-state guards, and post-fix
+  verification path.
 
 ---
 
@@ -207,5 +219,5 @@ artifact, not a participant-distributed artifact.
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
 | 3. Option B Trap #2 Narrative — Mapping & Profile API | 4/4 | Complete | 2026-05-07 |
-| 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
+| 4. Option B Trap #3 + Workshop Polish | 0/3 | Planned | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |
