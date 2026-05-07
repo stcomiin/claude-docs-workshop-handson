@@ -1,0 +1,30 @@
+[project]
+name = "fastapi-perf-investigation-workshop"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.136.1",
+    "uvicorn[standard]==0.46.0",
+    "elasticsearch==9.3.0",
+    "pytest==9.0.3",
+    "httpx==0.28.1",
+    "ruff==0.15.12",
+    "mypy==1.20.2",
+    "typing-extensions==4.15.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["app"]

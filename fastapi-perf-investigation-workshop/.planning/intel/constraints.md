@@ -222,7 +222,7 @@ A successful exercise terminates with all four green AND a measurable bench impr
 - **Windows participants:** Git Bash or WSL required (`bash` and `curl`); Docker Desktop with WSL2 backend recommended over Hyper-V. Matches existing BMAD/GSD READMEs.
 - **Memory:** ES container uses ~1 GB heap default. Image MUST ship with `ES_JAVA_OPTS=-Xms512m -Xmx512m` for low-memory laptops.
 - **Ports:** ES on `9200` (internal app↔ES); FastAPI on `8765` (bench↔app). Both configurable in `docker-compose.yml` and `app/es.py`.
-- **`--reload` caveat:** start uvicorn with `--reload` only for the first sanity check; participants MUST stop and manually restart uvicorn between bench runs after a fix. Reload-on-edit can poison the first benchmark immediately after a code change.
+- **`--reload` caveat:** start uvicorn with `--reload` only for the first sanity check; participants MUST stop it and restart without `--reload` for benchmark comparisons after a fix. The reloader's file watcher and accidental mid-bench restarts add noise; the first benchmark iteration after any restart should be treated as warm-up.
 - **Python:** 3.11+ required. `uv python install 3.11` recommended.
 - **ES DSL primer in README:** 1-page primer covering `term`, `terms`, `range`, `match_all`, `bool`/`must`/`filter`, `aggs.terms`, `aggs.date_histogram`.
 

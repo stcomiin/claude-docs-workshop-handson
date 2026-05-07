@@ -122,8 +122,8 @@ form of the workshop end-to-end). Partial-satisfaction phases are noted in the
 
 | Requirement | Owned by | Partially by | Status |
 |-------------|----------|--------------|--------|
-| REQ-no-out-of-scope-drift | Phase 1 | (cross-cutting; maintained in 2/3/4) | Pending |
-| REQ-correctness-preserved | Phase 1 | (maintained in 2/3/4) | Pending |
+| REQ-no-out-of-scope-drift | Phase 1 | (cross-cutting; maintained in 2/3/4) | Complete |
+| REQ-correctness-preserved | Phase 1 | (maintained in 2/3/4) | Complete |
 | REQ-measured-fix-option-a | Phase 2 | — | Pending |
 | REQ-investigation-discipline-takeaway | Phase 2 | (closing-slide restatement in Phase 4) | Pending |
 | REQ-investigation-uses-instrumentation | Phase 3 | Phase 2 (timer log read + finer-grained timers added) | Pending |

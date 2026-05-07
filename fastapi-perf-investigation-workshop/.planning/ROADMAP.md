@@ -39,7 +39,7 @@ artifact, not a participant-distributed artifact.
 
 ## Phases
 
-- [ ] **Phase 1: Tracer Slice — Workshop Motion End-to-End** — full directory layout stubbed, 50k seed, trap #1 (visible N+1) only, three timer blocks, 4 pytest tests, 3-run bench, README stub with the pivot prompt, and a 10-minute facilitator walkthrough that proves the motion on Mac/Windows/Linux.
+- [x] **Phase 1: Tracer Slice — Workshop Motion End-to-End** — full directory layout stubbed, 50k seed, trap #1 (visible N+1) only, three timer blocks, 4 pytest tests, 3-run bench, README stub with the pivot prompt, and a 10-minute facilitator walkthrough that proves the motion on Mac/Windows/Linux.
 - [ ] **Phase 2: Option A Complete Vertical** — traps #2 and #3 added physically (not narratively engaged), full Option A 8-step arc in README, falsification prompt, Option A entry in `reference/option-a-sample-run.md`. After this phase, a participant can run Option A end-to-end against Opus 4.7 and walk away with the takeaway.
 - [ ] **Phase 3: Option B Trap #2 Narrative — Mapping & `_search?profile=true`** — Option B steps 9-10 in README, mapping-inspection arc, `_search?profile=true` / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed.
 - [ ] **Phase 4: Option B Trap #3 + Workshop Polish** — Option B steps 11-12, comment block instruction at top of `dashboard.py`, ES DSL primer, Appendix B translate-to-your-world, closing-slide stack-agnostic restatement, all 5 failure-mode runbook entries. Post-fix-3 band (50–150 ms cached / 200–400 ms cold) confirmed.
@@ -67,7 +67,16 @@ artifact, not a participant-distributed artifact.
   7. After applying the N+1 fix in the tracer walkthrough, `pytest` / `ruff` / `mypy` stay green and `bench.sh` shows measurable improvement.
   8. No `CLAUDE.md` / `AGENTS.md` is shipped (`CON-no-claude-md-shipped`). Nothing in code or README drills into out-of-scope topics from `CON-out-of-scope` (async/await, cluster ops, reindex strategies, prod deploy, frontend, auth, vector / ML / ESQL).
 
-**Plans**: TBD.
+**Plans**:
+
+**Wave 1**
+
+- [x] `01-01` — Docker ES image, Compose runtime, keyword mapping, and 50k deterministic seed pipeline.
+- [x] `01-02` — FastAPI app, `/dashboard/summary`, three timer blocks, trap #1 only, and four correctness tests.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [x] `01-03` — bench harness, README tracer walkthrough, reference stub, and ignore rules.
 
 ---
 
@@ -156,7 +165,7 @@ artifact, not a participant-distributed artifact.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Tracer Slice — Workshop Motion End-to-End | 0/0 | Not started | - |
+| 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 0/0 | Not started | - |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
