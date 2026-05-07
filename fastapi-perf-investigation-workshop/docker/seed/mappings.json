@@ -8,7 +8,7 @@
     "properties": {
       "activity_id": {"type": "keyword"},
       "user_id": {"type": "keyword"},
-      "username": {"type": "keyword"},
+      "username": {"type": "text", "fielddata": true, "fields": {"keyword": {"type": "keyword"}}},
       "org_id": {"type": "keyword"},
       "activity_type": {"type": "keyword"},
       "created_at": {"type": "date"},

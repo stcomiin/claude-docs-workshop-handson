@@ -4,6 +4,7 @@ import json
 import os
 import time
 from pathlib import Path
+from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -62,6 +63,45 @@ def count_documents() -> int:
     return int(payload["count"])
 
 
+def get_mapping() -> dict[str, Any]:
+    _, raw = request("GET", f"/{INDEX}/_mapping")
+    payload = json.loads(raw.decode("utf-8"))
+    return dict(payload)
+
+
+def mapping_matches_phase2() -> bool:
+    payload = get_mapping()
+    index_mapping = payload.get(INDEX, {})
+    if not isinstance(index_mapping, dict):
+        return False
+
+    mappings = index_mapping.get("mappings", {})
+    if not isinstance(mappings, dict):
+        return False
+
+    properties = mappings.get("properties", {})
+    if not isinstance(properties, dict):
+        return False
+
+    username = properties.get("username", {})
+    if not isinstance(username, dict):
+        return False
+
+    fields = username.get("fields", {})
+    if not isinstance(fields, dict):
+        return False
+
+    keyword = fields.get("keyword", {})
+    if not isinstance(keyword, dict):
+        return False
+
+    return (
+        username.get("type") == "text"
+        and username.get("fielddata") is True
+        and keyword.get("type") == "keyword"
+    )
+
+
 def create_index() -> None:
     mappings = MAPPINGS_PATH.read_bytes()
     request("PUT", f"/{INDEX}", body=mappings)
@@ -87,9 +127,16 @@ def bulk_load() -> None:
 def ensure_seeded() -> None:
     if index_exists():
         existing_count = count_documents()
-        if existing_count == EXPECTED_COUNT:
+        if existing_count == EXPECTED_COUNT and mapping_matches_phase2():
             print("Seeded activities index with 50000 documents")
             return
+        if existing_count == EXPECTED_COUNT:
+            print("Existing activities index has stale mapping; recreating")
+        else:
+            print(
+                f"Existing activities index has {existing_count} documents; "
+                "recreating"
+            )
         delete_index()
 
     create_index()
