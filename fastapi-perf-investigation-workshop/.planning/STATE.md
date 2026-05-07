@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-05-06T18:05:00.000Z"
+status: executing
+last_updated: "2026-05-07T00:02:23.396Z"
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 3
+  total_plans: 6
   completed_plans: 3
-  percent: 20
+  percent: 50
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -47,19 +47,20 @@ progress:
 Roadmap restructured from horizontal layering (docker → app → tests → docs →
 preflight) to **tracer-bullet vertical slices** (motion → Option A → Option B
 trap #2 → Option B trap #3 + polish → dual-model preflight). Phase 1 is
-complete and verified. Next up is Phase 2 planning for the complete Option A
-vertical slice.
+complete and verified. Phase 2 is now planned with three executable plans for
+the complete Option A vertical slice. Next up is executing Phase 2.
 
 ## Current Position
 
 - **Phase:** 2 — Option A Complete Vertical
-- **Plan:** 0 of 0 (not planned)
-- **Status:** Ready to plan Phase 2
-- **Progress:** `[##        ]` 20% (1 of 5 phases complete)
+- **Plan:** 0 of 3 (planned)
+- **Status:** Ready to execute
+- **Progress:** `[##        ]` 20% by phase (1 of 5 phases complete);
+  50% by plan count (3 of 6 plans complete)
 
 ```
 Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
-Phase 2: Option A Complete Vertical                           [          ] Not started
+Phase 2: Option A Complete Vertical                           [          ] Ready to execute (0/3 plans)
 Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
 Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not started
@@ -71,7 +72,7 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > from process artifacts.
 
 - **Phases complete:** 1 / 5
-- **Plans complete:** 3 / 3
+- **Plans complete:** 3 / 6
 - **v1 requirements satisfied:** 2 / 7
 - **Verification gates passing in deliverable:** Phase 1 gates passing
   - `docker compose -f docker/docker-compose.yml config`: passing
@@ -194,11 +195,12 @@ Active to monitor in later phases:
 
 ### What happens next (next session)
 
-- Plan Phase 2: `/gsd-plan-phase 2 --auto` (Option A Complete Vertical).
+- Execute Phase 2: `/gsd-execute-phase 2 --auto` (Option A Complete Vertical).
 
-- Phase 2 should preserve the Phase 1 tracer runtime and add the remaining
-  physical traps plus the full Option A arc, while keeping Option B narrative
-  details for later phases.
+- Phase 2 execution should preserve the Phase 1 tracer runtime, add traps #2
+  and #3 physically, extend tests to lock the trap shape, and complete the full
+  Option A README/reference path while keeping hidden fixes out of the Option A
+  narrative.
 
 ### Files to keep in working memory
 

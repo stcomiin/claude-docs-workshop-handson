@@ -98,7 +98,22 @@ artifact, not a participant-distributed artifact.
   7. After Option A in the reference run: one commit on the participant branch (`fix: replace per-user _count loop with single terms aggregation`), `pytest` / `ruff` / `mypy` green, `bench.sh` shows the 5–10 s → 3–6 s improvement band, participant articulates the one-sentence takeaway.
   8. No `CLAUDE.md` / `AGENTS.md` shipped. Out-of-scope respected.
 
-**Plans**: TBD.
+**Plans**:
+
+**Wave 1**
+
+- [ ] `02-01` — Runtime hidden traps: Phase 2 username mapping, stale-mapping reseed logic, and `compute_org_summary` query/cache trap shape.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] `02-02` — Correctness and trap-shape tests for the Option A starting point.
+- [ ] `02-03` — Complete Option A README arc and facilitator sample-run reference.
+
+**Cross-cutting constraints:**
+
+- Preserve the Phase 1 response shape, three top-level timer names, and visible N+1 loop until the participant applies the Option A fix.
+- Keep traps #2 and #3 physically present but out of the Option A fix narrative.
+- Do not ship `CLAUDE.md` or `AGENTS.md`; keep all commands local to the workshop runtime.
 
 ---
 
@@ -166,7 +181,7 @@ artifact, not a participant-distributed artifact.
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
-| 2. Option A Complete Vertical | 0/0 | Not started | - |
+| 2. Option A Complete Vertical | 0/3 | Planned | - |
 | 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |
