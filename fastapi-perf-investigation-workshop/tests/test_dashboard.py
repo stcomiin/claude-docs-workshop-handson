@@ -185,3 +185,41 @@ def test_compute_org_summary_uses_query_context_unrounded_now_and_username_text_
     serialized = json.dumps(body)
     assert "username.keyword" not in serialized
     assert "now-30d/d" not in serialized
+
+
+def test_phase3_readme_documents_profile_slow_log_and_keyword_fix() -> None:
+    readme = Path("README.md").read_text(encoding="utf-8")
+
+    assert "Option B: steps 9-10" in readme
+    assert "_search?profile=true" in readme
+    assert "index.search.slowlog.threshold.query.trace" in readme
+    assert "_mapping?filter_path=*.mappings.properties.username" in readme
+    assert "username.keyword" in readme
+    assert "fix: aggregate on username.keyword to avoid fielddata on text field" in readme
+    assert "200-500 ms" in readme
+    assert "fix: move date range to filter context, round now to day for cache hit" not in readme
+    assert "now-30d/d" not in readme
+
+
+def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
+    reference = Path("reference/option-a-sample-run.md").read_text(encoding="utf-8")
+
+    assert "Option B steps 9-10" in reference
+    assert "Expected trap #2 investigation path" in reference
+    assert "Profile or slow-log evidence" in reference
+    assert "Mapping inspection" in reference
+    assert "quoted profile or slow-log evidence" in reference
+    assert "single aggregation-field change" in reference
+    assert "Trap #3 remains" in reference
+    assert "request-cache hits" in reference
+    assert "fix: aggregate on username.keyword to avoid fielddata on text field" in reference
+    assert (
+        "fix: move date range to filter context, round now to day for cache hit"
+        not in reference
+    )
+    assert "now-30d/d" not in reference
+
+
+def test_phase3_no_agent_instruction_files_ship() -> None:
+    assert not Path("CLAUDE.md").exists()
+    assert not Path("AGENTS.md").exists()
