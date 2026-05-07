@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-05-07T02:54:11Z"
+status: executing
+last_updated: "2026-05-07T05:43:56.083Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 7
+  total_plans: 10
   completed_plans: 7
-  percent: 40
+  percent: 70
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -44,25 +44,23 @@ progress:
 
 ## Current Focus
 
-Phase 2 is complete, verified, and ready for merge after UAT gap closure. The
-runtime contains the Phase 2 hidden trap shape, pytest locks that shape
-structurally, and README/reference docs cover the complete Option A participant
-and facilitator path with timing described as relative improvement plus
-calibration examples. Next up is planning Phase 3, which extends the same slice
-into Option B trap #2.
+Phase 3 is planned and ready to execute. The plan extends the existing Option A
+slice into Option B trap #2 by adding README/profile/slow-log guidance,
+facilitator reference coverage, and static tests while preserving trap #3 for
+Phase 4.
 
 ## Current Position
 
 - **Phase:** 3 — Option B Trap #2 Narrative — Mapping & profile
-- **Plan:** 0 of 0 (not planned)
-- **Status:** Phase 2 UAT gaps closed; ready to merge PR #3 and then plan Phase 3
+- **Plan:** 0 of 3 (ready to execute)
+- **Status:** Ready to execute
 - **Progress:** `[####      ]` 40% by phase (2 of 5 phases complete);
-  100% by planned plan count (6 of 6 plans complete)
+  70% by planned plan count (7 of 10 plans complete)
 
 ```
 Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
 Phase 2: Option A Complete Vertical                           [##########] Complete (3/3 plans)
-Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Not started
+Phase 3: Option B Trap #2 Narrative — Mapping & profile       [          ] Ready to execute (0/3 plans)
 Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
 Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not started
 ```
@@ -77,6 +75,7 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 - **v1 requirements satisfied:** 4 / 7
 - **Verification gates passing in deliverable:** Phase 1 and Phase 2 gates
   passing
+
   - `docker compose -f docker/docker-compose.yml config`: passing
   - `pytest`: passing (6 tests)
   - `ruff check app tests/test_dashboard.py`: passing
@@ -87,6 +86,7 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
     relative-improvement contract; current VM rerun measured
     3.178/1.850/1.605 s before the Option A fix and 0.114/0.098/0.085 s after
     it.
+
 - **Facilitator pre-flight status:** not yet attempted (Phase 5)
 
 ## Accumulated Context
@@ -227,9 +227,9 @@ Active to monitor in later phases:
 
 ### What happens next (next session)
 
-- Plan Phase 3: `/gsd-plan-phase 3 --auto` (Option B Trap #2 Narrative).
+- Execute Phase 3: `/gsd-execute-phase 3 --auto` (Option B Trap #2 Narrative).
 
-- Phase 3 should extend the existing Option A slice with the mapping/profile
+- Phase 3 execution should update README/reference/tests for the mapping/profile
   investigation path for Option B steps 9-10, while leaving trap #3 for Phase 4.
 
 ### Files to keep in working memory

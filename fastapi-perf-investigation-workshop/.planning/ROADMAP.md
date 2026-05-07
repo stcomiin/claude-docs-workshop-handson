@@ -136,7 +136,23 @@ artifact, not a participant-distributed artifact.
   4. After Option B steps 9-10 in the reference run: a second commit on the participant branch (`fix: aggregate on username.keyword to avoid fielddata on text field`), `pytest` / `ruff` / `mypy` green, `bench.sh` shows the 200–500 ms post-fix-2 band.
   5. Trap #3 (`query` context + non-rounded `now-30d`) is still physically present; post-fix-2 bench runs do not yet exhibit request-cache hits between runs 1, 2, 3.
 
-**Plans**: TBD.
+**Plans**:
+
+**Wave 1**
+
+- [ ] `03-01` — README Option B steps 9-10, `_search?profile=true`, slow-log, mapping inspection, and trap #2 stop condition.
+- [ ] `03-02` — Facilitator reference extension for the Option B trap #2 expected path, model divergence, commit 2, and trap #3 boundary.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] `03-03` — Static docs coverage and runtime trap-boundary tests for Phase 3.
+
+**Cross-cutting constraints:**
+
+- Require profile or slow-log evidence before accepting the trap #2 diagnosis.
+- Keep the shipped runtime in the pre-fix state: parent `username` aggregation, text + fielddata mapping, and trap #3 still physically present.
+- Stop after the `username.keyword` aggregation fix; do not teach the Phase 4 filter-context / rounded-date cache fix in this phase.
+- Do not ship `CLAUDE.md` or `AGENTS.md`; keep all commands local to the workshop runtime.
 
 ---
 
@@ -186,6 +202,6 @@ artifact, not a participant-distributed artifact.
 |-------|----------------|--------|-----------|
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
-| 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/0 | Not started | - |
+| 3. Option B Trap #2 Narrative — Mapping & `_search?profile=true` | 0/3 | Ready to execute | - |
 | 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |
