@@ -162,6 +162,7 @@ def test_phase2_mapping_contains_username_text_fielddata_keyword_subfield() -> N
     assert username["fields"]["keyword"]["type"] == "keyword"
 
 
+@pytest.mark.starting_state
 def test_compute_org_summary_uses_query_context_unrounded_now_and_username_text_agg(
     client: tuple[TestClient, FakeElasticsearch],
 ) -> None:
@@ -191,10 +192,13 @@ def test_phase3_readme_documents_profile_slow_log_and_keyword_fix() -> None:
     readme = Path("README.md").read_text(encoding="utf-8")
 
     assert "Option B: steps 9-10" in readme
-    assert "_search?profile=true" in readme
+    assert "_search?pretty" in readme
+    assert '"profile": true' in readme
+    assert "_search?pretty&profile=true" not in readme
     assert "index.search.slowlog.threshold.query.trace" in readme
     assert "_mapping?filter_path=*.mappings.properties.username" in readme
     assert "username.keyword" in readme
+    assert 'pytest -m "not starting_state"' in readme
     assert "fix: aggregate on username.keyword to avoid fielddata on text field" in readme
     assert "200-500 ms" in readme
     assert "fix: move date range to filter context, round now to day for cache hit" not in readme
@@ -206,10 +210,13 @@ def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
 
     assert "Option B steps 9-10" in reference
     assert "Expected trap #2 investigation path" in reference
-    assert "Profile or slow-log evidence" in reference
+    assert "Profile API or slow-log evidence" in reference
+    assert '"profile": true' in reference
+    assert "_search?profile=true" not in reference
     assert "Mapping inspection" in reference
     assert "quoted profile or slow-log evidence" in reference
     assert "single aggregation-field change" in reference
+    assert 'pytest -m "not starting_state"' in reference
     assert "Trap #3 remains" in reference
     assert "request-cache hits" in reference
     assert "fix: aggregate on username.keyword to avoid fielddata on text field" in reference

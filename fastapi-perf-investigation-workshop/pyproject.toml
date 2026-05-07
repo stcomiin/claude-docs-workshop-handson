@@ -24,6 +24,11 @@ include = ["app*"]
 line-length = 88
 target-version = "py311"
 
+[tool.pytest.ini_options]
+markers = [
+    "starting_state: guards the shipped pre-fix workshop trap shape",
+]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true

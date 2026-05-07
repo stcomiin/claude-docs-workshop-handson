@@ -136,15 +136,16 @@ fix: replace per-user _count loop with single terms aggregation
    uvicorn timer output again. The top-level bottleneck should have shifted
    away from `count_per_user`; `compute_org_summary` is now the dominant
    remaining cost. Do not accept a code-reading guess. Claude must prove the
-   next hypothesis with `_search?profile=true` or the Elasticsearch slow log
-   before proposing a fix.
+   next hypothesis with the Elasticsearch Profile API or the Elasticsearch slow
+   log before proposing a fix.
 
    To profile the same aggregation shape that `compute_org_summary` runs:
 
    ```bash
-   curl -s -X POST 'http://localhost:9200/activities/_search?pretty&profile=true' \
+   curl -s -X POST 'http://localhost:9200/activities/_search?pretty' \
      -H 'Content-Type: application/json' \
      -d '{
+       "profile": true,
        "size": 0,
        "track_total_hits": true,
        "query": {
@@ -212,10 +213,14 @@ fix: replace per-user _count loop with single terms aggregation
     Run:
 
     ```bash
-    pytest
+    pytest -m "not starting_state"
     ruff check app
     mypy app
     ```
+
+    The `starting_state` tests intentionally protect the workshop's pre-fix
+    trap shape. Exclude them only after you have made the participant fix on
+    your branch.
 
     Restart uvicorn without `--reload`, then run `bash tests/bench.sh` again.
     The calibration target after fix #2 is `200-500 ms`; local pass/fail is

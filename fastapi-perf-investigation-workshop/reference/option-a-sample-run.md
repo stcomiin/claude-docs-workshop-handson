@@ -132,12 +132,12 @@ fix: replace per-user _count loop with single terms aggregation
 
 The participant re-runs `bash tests/bench.sh`, reads the uvicorn timer output,
 and sees the dominant remaining cost shift to `compute_org_summary`. Claude
-must use `_search?profile=true` or the Elasticsearch slow log before the
+must use the Elasticsearch Profile API or the Elasticsearch slow log before the
 facilitator accepts the diagnosis.
 
 The expected path is:
 
-1. Profile or slow-log evidence points to the `username_distribution`
+1. Profile API or slow-log evidence points to the `username_distribution`
    aggregation on `username`.
 2. Mapping inspection shows `username` is `text` with `fielddata: true`.
 3. The same mapping exposes an existing `username.keyword` subfield.
@@ -152,11 +152,11 @@ multi-field mapping.
 ### Profile or slow-log evidence
 
 The profile path should use the same logical query as `compute_org_summary`,
-with `_search?profile=true` against `activities`. The slow-log path should set
-`index.search.slowlog.threshold.query.trace` and
-`index.search.slowlog.threshold.fetch.trace` to `0ms`, run the bench script,
-inspect `docker compose -f docker/docker-compose.yml logs es`, and reset both
-thresholds to `-1`.
+with `POST /activities/_search?pretty` and `"profile": true` in the request
+body. The slow-log path should set `index.search.slowlog.threshold.query.trace`
+and `index.search.slowlog.threshold.fetch.trace` to `0ms`, run the bench
+script, inspect `docker compose -f docker/docker-compose.yml logs es`, and
+reset both thresholds to `-1`.
 
 The facilitator should require quoted profile or slow-log evidence before
 accepting any proposed fix. Code-reading alone is not enough for trap #2.
@@ -197,10 +197,14 @@ drills, vector search, ML, ESQL, or production deployment changes.
 Run:
 
 ```bash
-pytest
+pytest -m "not starting_state"
 ruff check app
 mypy app
 ```
+
+The `starting_state` tests intentionally protect the workshop's pre-fix trap
+shape. Exclude them only after the participant has made commit 2 on their
+branch.
 
 Then stop uvicorn, start it again without `--reload`, and run:
 
