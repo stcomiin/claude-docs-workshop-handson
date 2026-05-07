@@ -1,34 +1,29 @@
 # FastAPI Perf Investigation Workshop
 
-This is the tracer slice -- Option A and Option B are not yet present.
+This is the Option A path: a 40-45 minute performance investigation exercise
+that teaches measured debugging, falsification, and one narrow fix for the
+visible N+1 count loop.
 
-## What this tracer slice includes
-
-- Docker Compose startup for local Elasticsearch.
-- A deterministic 50k-document `activities` seed.
-- A synchronous FastAPI endpoint at `GET /dashboard/summary`.
-- Three timer blocks: `load_top_users`, `count_per_user`, and `compute_org_summary`.
-- Four pytest correctness tests.
-- A three-run curl bench harness.
-- Trap #1 only: the visible N+1 `_count` loop in `count_per_user`.
-
-The Elasticsearch container disables security for a single-node localhost workshop runtime. Do not treat that setting as production guidance.
+The Elasticsearch container disables security for a single-node localhost
+workshop runtime. Do not treat that setting as production guidance.
 
 ## Setup Prerequisites
 
 - Docker Desktop or Docker Engine.
 - Python 3.11+.
 - Three terminals:
-  - `uvicorn`
-  - `claude`
-  - `bash tests/bench.sh` and `pytest`
+  - FastAPI / uvicorn logs.
+  - Claude session in this directory.
+  - Benchmark, curl, and verification commands.
 - Windows participants need Git Bash or WSL for `bash` and `curl`.
 - Elasticsearch uses port 9200.
 - FastAPI uses port 8765.
 
-Use `uvicorn app.main:app --port 8765 --reload` only for the first sanity check. After applying a fix, stop uvicorn and manually restart it before running benchmarks; reload-on-edit can skew the first post-fix run.
+Use `uvicorn app.main:app --port 8765 --reload` for the first sanity check.
+After applying a fix, stop uvicorn and manually restart it before running
+benchmarks; reload-on-edit can skew the first post-fix run.
 
-## Start The Tracer Runtime
+## Start The Runtime
 
 From this directory:
 
@@ -74,24 +69,56 @@ ruff check app
 mypy app
 ```
 
+## Expected Timing Bands
+
+- Starting runtime: `bash tests/bench.sh` should usually show a 5-10 s
+  baseline.
+- After the Option A fix and a manual uvicorn restart, the same harness should
+  usually show a 3-6 s band.
+
+Remaining slowness after the Option A fix is intentional and belongs to longer
+paths. Do not try to make the endpoint fully fast in this exercise.
+
 ## Pivot Prompt
 
 Prove that hypothesis with data. Run `bash tests/bench.sh`, then read the timing log output from the uvicorn console. Tell me which named timer block dominates the wall-clock time, and quote the numbers verbatim. Only after you have the numbers, propose the fix.
 
-## 10-Minute Facilitator Walkthrough
+## Falsification Prompt
 
-1. Start Elasticsearch with `docker compose -f docker/docker-compose.yml up -d --build`.
-2. Start FastAPI with `uvicorn app.main:app --port 8765 --reload`.
-3. Call `curl http://localhost:8765/dashboard/summary`.
-4. Run `bash tests/bench.sh`.
-5. Ask Claude: `This endpoint at /dashboard/summary is slow. Where is the time going?`
-6. Use the pivot prompt above.
-7. Confirm Claude reads the uvicorn timer output and identifies `count_per_user` as the dominant block.
-8. Apply only the N+1 terms-aggregation fix during this tracer walkthrough.
-9. Stop uvicorn, restart it without relying on reload timing, then re-run `bash tests/bench.sh`.
-10. Run `pytest`, `ruff check app`, and `mypy app`.
-11. Stop before Option A or Option B material.
+Now design a measurement whose result would *falsify* this hypothesis -- not confirm it. If you think `<phase X>` dominates, what would you expect to see if it actually didn't? Run that measurement and report what you find. Only proceed to a fix if the falsification attempt fails.
+
+## Option A: 8-step investigation arc
+
+1. Start Docker, install dependencies, start uvicorn, call the endpoint with
+   curl, and confirm it is slow.
+2. Run `bash tests/bench.sh`. Observe the 5-10 s baseline and read the timing
+   log output in the uvicorn console.
+3. In a fresh Claude session with this directory as the working directory, ask:
+   `This endpoint at /dashboard/summary is slow. Where is the time going?`
+4. Use the pivot prompt above. Claude must read the actual timer output, name
+   the dominant timer block, and quote the numbers before proposing a fix.
+5. Use the falsification prompt above. Claude must describe what result would
+   disprove the hypothesis, run the measurement, and report the result.
+6. If the existing timer blocks are not granular enough, have Claude add
+   finer-grained timers inside the worst phase and re-run the benchmark.
+7. Implement a fix for the top bottleneck only. Run `pytest`, manually restart
+   uvicorn without relying on reload timing, and run `bash tests/bench.sh`.
+   The benchmark should improve into the 3-6 s band.
+8. Wrap up with the final measurement, the next fix Claude would investigate,
+   and a short explanation of why the measured workflow changed the decision.
+
+The expected participant commit is:
+
+```text
+fix: replace per-user _count loop with single terms aggregation
+```
 
 ## Scope Guardrails
 
-Do not add async/await changes, authentication, frontend code, production deployment steps, Elasticsearch cluster operations, reindex strategy work, vector search, ML features, or ESQL. This slice exists to prove the workshop motion end to end with only trap #1 present.
+Option A stops after the single measured N+1 fix. Do not add async/await
+refactoring, authentication, frontend work, production deployment steps,
+Elasticsearch cluster operations, reindex strategy drills, vector search, ML
+features, or ESQL.
+
+Facilitators can use `reference/option-a-sample-run.md` when a session needs
+troubleshooting support.
