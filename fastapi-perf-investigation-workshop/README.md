@@ -26,7 +26,10 @@ The Elasticsearch container disables security for a single-node localhost worksh
 - Elasticsearch uses port 9200.
 - FastAPI uses port 8765.
 
-Use `uvicorn app.main:app --port 8765 --reload` only for the first sanity check. After applying a fix, stop uvicorn and manually restart it before running benchmarks; reload-on-edit can skew the first post-fix run.
+Use `uvicorn app.main:app --port 8765 --reload` only for the first sanity check.
+For benchmark comparisons after a fix, stop uvicorn and restart it without
+`--reload`; the reloader's file watcher and accidental mid-bench restarts add
+noise. Treat the first benchmark iteration after any restart as warm-up.
 
 ## Start The Tracer Runtime
 
@@ -88,7 +91,7 @@ Prove that hypothesis with data. Run `bash tests/bench.sh`, then read the timing
 6. Use the pivot prompt above.
 7. Confirm Claude reads the uvicorn timer output and identifies `count_per_user` as the dominant block.
 8. Apply only the N+1 terms-aggregation fix during this tracer walkthrough.
-9. Stop uvicorn, restart it without relying on reload timing, then re-run `bash tests/bench.sh`.
+9. Stop uvicorn, restart it without `--reload`, then re-run `bash tests/bench.sh`; compare the warmed runs.
 10. Run `pytest`, `ruff check app`, and `mypy app`.
 11. Stop before Option A or Option B material.
 
