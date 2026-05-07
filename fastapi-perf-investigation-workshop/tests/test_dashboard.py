@@ -12,6 +12,13 @@ from app.main import app
 from app.routes import dashboard
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def project_file(relative_path: str) -> Path:
+    return PROJECT_ROOT / relative_path
+
+
 class FakeElasticsearch:
     def __init__(self) -> None:
         self.search_bodies: list[dict[str, Any]] = []
@@ -154,7 +161,9 @@ def test_response_is_json_serializable(
 
 
 def test_phase2_mapping_contains_username_text_fielddata_keyword_subfield() -> None:
-    mapping = json.loads(Path("docker/seed/mappings.json").read_text(encoding="utf-8"))
+    mapping = json.loads(
+        project_file("docker/seed/mappings.json").read_text(encoding="utf-8")
+    )
     username = mapping["mappings"]["properties"]["username"]
 
     assert username["type"] == "text"
@@ -189,7 +198,7 @@ def test_compute_org_summary_uses_query_context_unrounded_now_and_username_text_
 
 
 def test_phase3_readme_documents_profile_slow_log_and_keyword_fix() -> None:
-    readme = Path("README.md").read_text(encoding="utf-8")
+    readme = project_file("README.md").read_text(encoding="utf-8")
 
     assert "Option B: steps 9-10" in readme
     assert "_search?pretty" in readme
@@ -206,7 +215,9 @@ def test_phase3_readme_documents_profile_slow_log_and_keyword_fix() -> None:
 
 
 def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
-    reference = Path("reference/option-a-sample-run.md").read_text(encoding="utf-8")
+    reference = project_file("reference/option-a-sample-run.md").read_text(
+        encoding="utf-8"
+    )
 
     assert "Option B steps 9-10" in reference
     assert "Expected trap #2 investigation path" in reference
@@ -228,5 +239,5 @@ def test_phase3_reference_documents_trap2_path_and_trap3_boundary() -> None:
 
 
 def test_phase3_no_agent_instruction_files_ship() -> None:
-    assert not Path("CLAUDE.md").exists()
-    assert not Path("AGENTS.md").exists()
+    assert not project_file("CLAUDE.md").exists()
+    assert not project_file("AGENTS.md").exists()

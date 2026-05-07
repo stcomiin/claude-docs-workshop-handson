@@ -1,57 +1,66 @@
 ---
 phase: 03-option-b-trap-2-narrative-mapping-search-profile-true
-status: clean
-depth: standard
-files_reviewed: 3
+reviewed: 2026-05-07T09:17:32Z
+depth: deep
+files_reviewed: 4
+files_reviewed_list:
+  - fastapi-perf-investigation-workshop/README.md
+  - fastapi-perf-investigation-workshop/pyproject.toml
+  - fastapi-perf-investigation-workshop/reference/option-a-sample-run.md
+  - fastapi-perf-investigation-workshop/tests/test_dashboard.py
 findings:
   critical: 0
   warning: 0
   info: 0
   total: 0
-reviewed: 2026-05-07
-scope: branch_pr
-diff_base: origin/main
+status: clean
 ---
 
-# Phase 3 Branch/PR Code Review
+# Phase 03: Code Review Report
 
-## Scope
+**Reviewed:** 2026-05-07T09:17:32Z
+**Depth:** deep
+**Files Reviewed:** 4
+**Status:** clean
 
-Reviewed the non-planning PR delta from `origin/main...HEAD`.
+## Summary
 
-- `fastapi-perf-investigation-workshop/README.md`
-- `fastapi-perf-investigation-workshop/reference/option-a-sample-run.md`
-- `fastapi-perf-investigation-workshop/tests/test_dashboard.py`
+Reviewed the PR delta against `origin/main` for the explicit four-file scope,
+then traced the new README/reference guidance into `app/routes/dashboard.py`,
+`docker/seed/mappings.json`, `docker/docker-compose.yml`, and the
+pytest/ruff/mypy configuration. The Elasticsearch Profile API body form,
+slow-log reset path, mapping evidence, `username.keyword` participant fix, and
+`starting_state` marker all match the shipped trap shape.
 
-## Result
-
-No issues found at standard depth.
-
-## Review Notes
-
-- The README profile request matches the current `compute_org_summary`
-  aggregation shape: `bool.must`, unrounded `now-30d`, and parent `username`.
-- The mapping guidance matches the seeded `username` field: `text` with
-  `fielddata: true` and an existing `keyword` subfield.
-- The slow-log commands are scoped to the local workshop Elasticsearch service
-  and include reset commands after the `0ms` troubleshooting threshold.
-- Static pytest guards cover the new README/reference requirements, the Phase 4
-  boundary, and the absence of shipped `CLAUDE.md` / `AGENTS.md` files.
-- Existing runtime trap-shape tests still assert parent `username`, query
-  context, and non-rounded date math remain in the shipped starting point.
-
-## Verification
-
-- `uv run pytest` - passed, 9 tests.
-- `uv run ruff check app` - passed.
-- `uv run mypy app` - passed.
+The initial deep review found one test reliability warning. It was fixed during
+review by resolving static test fixture paths from `tests/test_dashboard.py`
+instead of the process working directory.
 
 ## Findings
 
-None.
+No open issues.
 
-## Residual Risk
+## Resolved During Review
 
-- Live Elasticsearch timing bands remain hardware-dependent, so the 200-500 ms
-  post-fix-2 band still needs facilitator calibration on the target workshop
-  machine.
+### WR-01: Static Guard Tests Depended On Current Working Directory
+
+**File:** `fastapi-perf-investigation-workshop/tests/test_dashboard.py`
+**Resolution:** Added a `PROJECT_ROOT` helper derived from `Path(__file__)`
+and used it for README, facilitator reference, mapping, and no-agent-file
+static checks. This makes the test file pass from both the workshop directory
+and the repository root.
+
+
+## Verification
+
+- `git diff --check origin/main...HEAD -- fastapi-perf-investigation-workshop/README.md fastapi-perf-investigation-workshop/pyproject.toml fastapi-perf-investigation-workshop/reference/option-a-sample-run.md fastapi-perf-investigation-workshop/tests/test_dashboard.py` - passed.
+- `uv run pytest -q` from `fastapi-perf-investigation-workshop` - passed, 9 tests.
+- `uv run pytest -q fastapi-perf-investigation-workshop/tests/test_dashboard.py` from repo root - passed, 9 tests.
+- `uv run ruff check app tests/test_dashboard.py` from `fastapi-perf-investigation-workshop` - passed.
+- `uv run mypy app` from `fastapi-perf-investigation-workshop` - passed.
+
+---
+
+_Reviewed: 2026-05-07T09:17:32Z_
+_Reviewer: the agent (gsd-code-reviewer)_
+_Depth: deep_
