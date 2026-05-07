@@ -188,7 +188,7 @@ artifact, not a participant-distributed artifact.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] `04-03` — Phase 4 static tests, starting-state guards, and post-fix
+- [x] `04-03` — Phase 4 static tests, starting-state guards, and post-fix (completed 2026-05-07)
   verification path.
 
 ---
