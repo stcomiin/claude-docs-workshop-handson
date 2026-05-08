@@ -275,8 +275,8 @@ fix: aggregate on username.keyword to avoid fielddata on text field
     - The range uses non-rounded `now-30d` and `now`, so the request body keeps
       changing and cannot settle into a stable request-cache key.
 
-    either half alone is insufficient: `bool.filter` with non-rounded `now`
-    still changes the request body, and rounded date math under `bool.must`
+    Either half alone is insufficient: `bool.filter` with non-rounded `now` 
+    still changes the request body, and rounded date math under `bool.must` 
     still pays query/scoring-context cost for a yes/no constraint.
 
     Change only the 30-day aggregation search body in
