@@ -251,7 +251,7 @@ or infrastructure rewrite.
 The accepted diagnosis is two-part:
 
 1. The 30-day range lives in `bool.must`, so it runs in query context rather
-   than filter context.
+   than `filter` context.
 2. The range uses unrounded date math, `now-30d` to `now`, so repeated
    requests keep producing a moving range key.
 
