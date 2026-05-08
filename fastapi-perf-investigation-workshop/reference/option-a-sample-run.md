@@ -230,3 +230,205 @@ After commit 2, stop even if the endpoint still has visible remaining drag.
 Runs 2 and 3 of `bash tests/bench.sh` still should not show stable
 request-cache hits. That remaining issue is intentionally left for the later
 Option B step and should be diagnosed by noticing repeated runs are not cached.
+
+## Option B steps 11-12
+
+This extension starts after the participant has already made the expected
+second Option B commit:
+
+```text
+fix: aggregate on username.keyword to avoid fielddata on text field
+```
+
+### Expected trap #3 investigation path
+
+The participant re-runs `bash tests/bench.sh` several times after commit 2 and
+notices that the endpoint is much faster than the starting point, but repeated
+runs do not settle into stable request-cache hits. Claude must connect that
+remaining drag to the shape of the Elasticsearch query, not to a new framework
+or infrastructure rewrite.
+
+The accepted diagnosis is two-part:
+
+1. The 30-day range lives in `bool.must`, so it runs in query context rather
+   than `filter` context.
+2. The range uses unrounded date math, `now-30d` to `now`, so repeated
+   requests keep producing a moving range key.
+
+Either half alone is insufficient. Moving the range to `bool.filter` without
+rounding still leaves a moving time boundary, and rounding the range while
+leaving it in `bool.must` still does not express the range as cache-friendly
+filter context.
+
+### Cache evidence
+
+The facilitator should require quoted cache evidence before accepting the
+diagnosis. Good evidence includes repeated request timings plus one of these
+local Elasticsearch signals:
+
+- Search profile or slow-log output showing the same `compute_org_summary`
+  range query continuing to execute after commit 2.
+- Request-cache stats before and after repeated identical dashboard requests
+  showing misses or no useful hit growth.
+- A controlled check where the same query body with a rounded filter range
+  produces stable cached behavior.
+
+The exact date range in the fix should be `now-30d/d` to `now/d`.
+
+### Expected Option B commit 3
+
+The participant should make one narrow third commit:
+
+```text
+fix: move date range to filter context, round now to day for cache hit
+```
+
+The code change target is the `created_at` range inside
+`compute_org_summary`. Move the range from `bool.must` to `bool.filter` and
+round the date math from `now-30d` / `now` to `now-30d/d` / `now/d`.
+
+### Post-fix-3 checks
+
+Run:
+
+```bash
+pytest -m "not starting_state"
+ruff check app
+mypy app
+```
+
+Then stop uvicorn, start it again without `--reload`, and run:
+
+```bash
+bash tests/bench.sh
+bash tests/bench.sh
+bash tests/bench.sh
+```
+
+The calibration target after fix #3 is `50-150 ms cached / 200-400 ms cold`.
+Absolute timings vary by machine, but the important result is a visible
+cold-vs-cached split after the two-part cache fix.
+
+### Where models may diverge
+
+Claude may keep reading Python code after commit 2 because the remaining issue
+is easy to mistake for application overhead. Keep the session on repeated-run
+evidence and Elasticsearch cache behavior until the model explains both the
+query-context problem and the moving `now` range key.
+
+Opus 4.7 should usually follow the cache-evidence prompt, inspect repeated
+request behavior, and identify the paired `bool.filter` plus rounded-date
+change. Sonnet 4.6 may over-focus on code-reading, async/await, sharding,
+general cache tuning, or broad Elasticsearch advice. Do not accept the trap #3
+diagnosis until the model provides quoted cache evidence and explains why the
+two-part fix is necessary.
+
+Reject async/await rewrites, sharding work, auth changes, frontend changes,
+reindex drills, vector search, ML, ESQL, and broad rewrites during this step.
+The only accepted code change is the cache-friendly range query.
+
+### Completed dashboard.py comment example
+
+After the participant finishes the full Option B path, the non-spoiler comment
+template at the top of `app/routes/dashboard.py` can be filled in like this:
+
+```python
+# Final Option B notes (fill in after completing the exercise):
+# - Fix 1 before/after evidence:
+#   fix: replace per-user _count loop with single terms aggregation
+# - Fix 2 before/after evidence:
+#   fix: aggregate on username.keyword to avoid fielddata on text field
+# - Fix 3 before/after evidence:
+#   fix: move date range to filter context, round now to day for cache hit
+```
+
+Keep the filled example out of the shipped starting branch. It belongs in the
+facilitator reference or in a participant's completed branch after the measured
+work is done.
+
+## Failure-mode runbook
+
+All recovery steps in this section are for the localhost workshop stack only.
+Do not translate these commands or thresholds into production Elasticsearch
+operations.
+
+### Claude finds the cause too fast
+
+Trigger: Claude names the likely fix before it has produced measured evidence
+from timers, profile output, slow logs, or cache stats.
+
+Facilitator response: Pause implementation and send the participant back to
+the relevant evidence gate. The model may keep its hypothesis, but it must
+prove it before changing code.
+
+Evidence to collect: For trap #1, quoted uvicorn timer output. For trap #2,
+quoted profile or slow-log evidence plus mapping inspection. For trap #3,
+quoted cache evidence from repeated runs or request-cache stats.
+
+Recovery: Resume from the same step once the evidence is quoted. Do not add
+extra fixes just because the model predicted the answer early.
+
+### Fix does not measurably help
+
+Trigger: The participant makes the expected narrow fix, but `bash tests/bench.sh`
+does not show a meaningful relative improvement.
+
+Facilitator response: Check that the committed diff matches the expected fix
+exactly, then rerun the same local measurement path with uvicorn restarted.
+
+Evidence to collect: The commit diff, `pytest` output, uvicorn timer output,
+and at least two benchmark runs from the local workshop container.
+
+Recovery: If the diff is wrong, revert only the participant's attempted fix and
+apply the expected narrow change. If the diff is right but the machine is noisy,
+use relative timer movement rather than the absolute calibration band.
+
+### Bench numbers do not change
+
+Trigger: Repeated benchmark runs produce identical or near-identical numbers
+before and after a fix, or the uvicorn timer output does not reflect the changed
+code.
+
+Facilitator response: Treat this as a local runtime-state problem first, not a
+new optimization task.
+
+Evidence to collect: The running uvicorn command, whether `--reload` is active,
+the latest git commit, and a fresh `curl http://localhost:8765/dashboard/summary`
+response after restart.
+
+Recovery: Stop uvicorn, start it again without `--reload`, rerun `pytest`, then
+run `bash tests/bench.sh` again. If numbers still do not move, restart the
+local Docker Compose stack and reseed according to the README setup steps.
+
+### Docker image will not start or ES is not green/yellow
+
+Trigger: `docker compose -f docker/docker-compose.yml up -d --build` fails, or
+Elasticsearch never reaches a green or yellow local health state.
+
+Facilitator response: Keep the participant on workshop environment recovery.
+Do not let the session become a production cluster tuning drill.
+
+Evidence to collect: `docker compose -f docker/docker-compose.yml ps`,
+`docker compose -f docker/docker-compose.yml logs es`, and the local ES health
+response if it is available.
+
+Recovery: Stop the local stack, remove only the workshop containers and volumes
+if needed, rebuild, wait for ES health, and rerun the seed/setup path from the
+README. Avoid changing index settings except for the documented temporary
+slow-log thresholds, and reset those thresholds after use.
+
+### Warm request cache masks trap #3
+
+Trigger: The participant cannot reproduce the uncached post-commit-2 behavior
+because previous local runs have already warmed request-cache state.
+
+Facilitator response: Reset enough local ES/app state to re-establish a clear
+cold-vs-cached split before accepting or rejecting the trap #3 diagnosis.
+
+Evidence to collect: Request timings from the first run after reset and from
+two repeated runs, plus any available local request-cache hit/miss stats.
+
+Recovery: Clear the local Elasticsearch request cache for the workshop index or
+restart enough of the ES/app stack to make the first request cold again. Then
+run the same benchmark sequence before and after the rounded `bool.filter`
+change so the cold-vs-cached behavior is visible.

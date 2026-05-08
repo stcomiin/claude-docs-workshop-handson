@@ -42,7 +42,7 @@ artifact, not a participant-distributed artifact.
 - [x] **Phase 1: Tracer Slice — Workshop Motion End-to-End** — full directory layout stubbed, 50k seed, trap #1 (visible N+1) only, three timer blocks, 4 pytest tests, 3-run bench, README stub with the pivot prompt, and a 10-minute facilitator walkthrough that proves the motion on Mac/Windows/Linux.
 - [x] **Phase 2: Option A Complete Vertical** — traps #2 and #3 added physically (not narratively engaged), full Option A 8-step arc in README, falsification prompt, Option A entry in `reference/option-a-sample-run.md`. After this phase, a participant can run Option A end-to-end against Opus 4.7 and walk away with the takeaway.
 - [x] **Phase 3: Option B Trap #2 Narrative — Mapping & Profile API** — Option B steps 9-10 in README, mapping-inspection arc, Profile API / slow log instructions, trap #2 entry in answer-key, post-fix-2 timing band (200–500 ms) confirmed. (completed 2026-05-07)
-- [ ] **Phase 4: Option B Trap #3 + Workshop Polish** — Option B steps 11-12, comment block instruction at top of `dashboard.py`, ES DSL primer, Appendix B translate-to-your-world, closing-slide stack-agnostic restatement, all 5 failure-mode runbook entries. Post-fix-3 band (50–150 ms cached / 200–400 ms cold) confirmed.
+- [x] **Phase 4: Option B Trap #3 + Workshop Polish** — Option B steps 11-12, comment block instruction at top of `dashboard.py`, ES DSL primer, Appendix B translate-to-your-world, closing-slide stack-agnostic restatement, all 5 failure-mode runbook entries. Post-fix-3 band (50–150 ms cached / 200–400 ms cold) confirmed. (completed 2026-05-07)
 - [ ] **Phase 5: Dual-Model Pre-Flight Validation** — 24-hour pre-flight against Opus 4.7 (target) and Sonnet 4.6 (fallback) on a fresh clone with the published image; all 5 failure-mode runbook entries either non-triggering or recoverable.
 
 ---
@@ -177,7 +177,19 @@ artifact, not a participant-distributed artifact.
   6. `reference/option-a-sample-run.md` contains all 5 failure-mode runbook entries from `CON-facilitator-preflight`: (a) Claude finds the cause too fast, (b) fix doesn't measurably help, (c) bench numbers don't change, (d) Docker image won't start / cluster doesn't reach green/yellow, (e) ES request cache warm from prior bench masking trap #3.
   7. The deliverable contains no `CLAUDE.md` / `AGENTS.md` (`CON-no-claude-md-shipped`); nothing in README or sample run drills into out-of-scope topics (`CON-out-of-scope`).
 
-**Plans**: TBD.
+**Plans**:
+
+**Wave 1**
+
+- [x] `04-01` — Participant README trap #3 flow, ES DSL primer, Appendix B,
+  closing restatement, and non-spoiler dashboard note template. (completed 2026-05-07)
+- [x] `04-02` — Facilitator reference trap #3 path, completed comment example,
+  model guidance, and failure-mode runbook. (completed 2026-05-07)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [x] `04-03` — Phase 4 static tests, starting-state guards, and post-fix (completed 2026-05-07)
+  verification path.
 
 ---
 
@@ -207,5 +219,5 @@ artifact, not a participant-distributed artifact.
 | 1. Tracer Slice — Workshop Motion End-to-End | 3/3 | Complete | 2026-05-06 |
 | 2. Option A Complete Vertical | 4/4 | Complete | 2026-05-07 |
 | 3. Option B Trap #2 Narrative — Mapping & Profile API | 4/4 | Complete | 2026-05-07 |
-| 4. Option B Trap #3 + Workshop Polish | 0/0 | Not started | - |
+| 4. Option B Trap #3 + Workshop Polish | 3/3 | Complete | 2026-05-07 |
 | 5. Dual-Model Pre-Flight Validation | 0/0 | Not started | - |

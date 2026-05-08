@@ -1,3 +1,8 @@
+# Final Option B notes (fill in after completing the exercise):
+# - Fix 1 before/after evidence:
+# - Fix 2 before/after evidence:
+# - Fix 3 before/after evidence:
+
 from __future__ import annotations
 
 from typing import Any, Protocol, cast

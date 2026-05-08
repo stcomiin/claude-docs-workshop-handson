@@ -127,8 +127,8 @@ form of the workshop end-to-end). Partial-satisfaction phases are noted in the
 | REQ-measured-fix-option-a | Phase 2 | — | Complete |
 | REQ-investigation-discipline-takeaway | Phase 2 | (closing-slide restatement in Phase 4) | Complete |
 | REQ-investigation-uses-instrumentation | Phase 3 | Phase 2 (timer log read + finer-grained timers added) | Complete |
-| REQ-measured-fix-option-b | Phase 4 | Phase 3 (commits 1+2 path enabled) | Pending |
-| REQ-portable-prompt-artifacts | Phase 4 | Phase 1 (pivot prompt verbatim), Phase 2 (falsification prompt verbatim) | Pending |
+| REQ-measured-fix-option-b | Phase 4 | Phase 3 (commits 1+2 path enabled) | Complete |
+| REQ-portable-prompt-artifacts | Phase 4 | Phase 1 (pivot prompt verbatim), Phase 2 (falsification prompt verbatim) | Complete |
 
 **Coverage:** 7/7 requirements mapped. No orphans. No duplicates.
 

@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-last_updated: "2026-05-07T09:04:59Z"
+status: planning
+last_updated: "2026-05-07T09:50:57.077Z"
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 11
-  completed_plans: 11
-  percent: 60
+  completed_phases: 4
+  total_plans: 14
+  completed_plans: 14
+  percent: 80
 ---
 
 # STATE.md — FastAPI Perf Workshop
@@ -44,26 +44,26 @@ progress:
 
 ## Current Focus
 
-Phase 3 gap closure is complete and shipped as PR #4. The deliverable now
-extends the existing Option A slice into Option B trap #2 with live-tested
-Profile API guidance, slow-log guidance, facilitator reference coverage, and
-post-fix verification that excludes shipped pre-fix trap-shape guards when
-appropriate. Phase 4 is ready to plan.
+Phase 4 is complete. The deliverable now covers the full Option B path through
+trap #3, including README steps 11-12, the ES DSL primer, Appendix B translation
+table, closing lesson, facilitator answer key, all five failure-mode runbook
+entries, static tests, clean code review, and a temporary-worktree live timing
+check in the 50-150 ms cached / 200-400 ms cold band. Phase 5 is ready to plan.
 
 ## Current Position
 
-- **Phase:** 4
+- **Phase:** 5
 - **Plan:** Not started
 - **Status:** Ready to plan
-- **Progress:** `[######    ]` 60% by phase (3 of 5 phases complete);
-  100% by planned plan count (11 of 11 plans complete)
+- **Progress:** [########  ] 80% by phase (4 of 5 phases complete);
+  100% by planned plan count (14 of 14 plans complete)
 
 ```
 Phase 1: Tracer Slice — Workshop Motion End-to-End            [##########] Complete (3/3 plans)
 Phase 2: Option A Complete Vertical                           [##########] Complete (4/4 plans)
 Phase 3: Option B Trap #2 Narrative — Mapping & profile       [##########] Complete (4/4 plans)
-Phase 4: Option B Trap #3 + Workshop Polish                   [          ] Not started
-Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not started
+Phase 4: Option B Trap #3 + Workshop Polish                   [##########] Complete (3/3 plans)
+Phase 5: Dual-Model Pre-Flight Validation                     [          ] Ready to plan
 ```
 
 ## Performance Metrics
@@ -71,24 +71,29 @@ Phase 5: Dual-Model Pre-Flight Validation                     [          ] Not s
 > Updated as phases complete. Metrics are observable from the deliverable, not
 > from process artifacts.
 
-- **Phases complete:** 3 / 5
-- **Plans complete:** 11 / 11
-- **v1 requirements satisfied:** 5 / 7
-- **Verification gates passing in deliverable:** Phase 1, Phase 2, and Phase 3 gates
-  passing
+- **Phases complete:** 4 / 5
+- **Plans complete:** 14 / 14
+- **v1 requirements satisfied:** 7 / 7
+- **Verification gates passing in deliverable:** Phase 1, Phase 2, Phase 3, and
+  Phase 4 gates passing
 
   - `docker compose -f docker/docker-compose.yml config`: passing
-  - `uv run pytest`: passing (9 tests)
+  - `uv run pytest`: passing (12 tests)
   - `uv run ruff check app`: passing
-  - `mypy app`: passing
+  - `uv run mypy app`: passing
   - Phase 2 README/reference static checks: passing
   - Phase 3 README/reference static checks: passing
+  - Phase 4 README/reference/source-template static checks: passing
   - Phase 3 UAT: complete after gap closure, 5 passed / 0 issues
+  - Phase 4 code review: clean, 0 findings
   - `CLAUDE.md` / `AGENTS.md` absence check: passing
   - live Docker seed and timing calibration after Phase 2: passing under the
     relative-improvement contract; current VM rerun measured
     3.178/1.850/1.605 s before the Option A fix and 0.114/0.098/0.085 s after
     it.
+  - temporary solved-worktree timing calibration after Phase 4: passing at
+    0.394660 s cold, then 0.151080 s and 0.115679 s repeated after clearing
+    the local request cache.
 
 - **Facilitator pre-flight status:** not yet attempted (Phase 5)
 

@@ -88,6 +88,26 @@ Stop after the Option A fix even if your machine makes the endpoint look fully
 fast. Longer workshop paths use deeper instrumentation; do not chase them in
 this exercise.
 
+## Elasticsearch Query DSL Primer
+
+You only need the Elasticsearch Query DSL pieces used in this workshop:
+
+| DSL piece | What it means here |
+|---|---|
+| `term` | Match one exact value, such as one `user_id`. |
+| `terms` | Match or aggregate many exact values, such as the top users by ID. |
+| `range` | Match values inside a boundary, such as `created_at` over the last 30 days. |
+| `match_all` | Match every document; useful as a neutral baseline. |
+| `bool.must` | Require a clause and include it in query/scoring context. |
+| `bool.filter` | Require a yes/no clause without scoring; this is the right home for cacheable constraints. |
+| `aggs.terms` | Group documents by a field and count the buckets. |
+| `aggs.date_histogram` | Group documents into time buckets. |
+
+For this exercise, the important distinction is `bool.must` vs `bool.filter`.
+The final Option B step is about a date constraint that does not need scoring.
+Moving that constraint to filter context is part of making repeated requests
+eligible for cache behavior you can measure.
+
 ## Pivot Prompt
 
 Prove that hypothesis with data. Run `bash tests/bench.sh`, then read the timing log output from the uvicorn console. Tell me which named timer block dominates the wall-clock time, and quote the numbers verbatim. Only after you have the numbers, propose the fix.
@@ -232,17 +252,98 @@ fix: replace per-user _count loop with single terms aggregation
     fix: aggregate on username.keyword to avoid fielddata on text field
     ```
 
-The third trap remains after step 10. Runs 2 and 3 of `bash tests/bench.sh`
-should not show stable request-cache hits yet. Stop here; diagnosing the
-remaining cache behavior belongs to the next Option B step.
+## Option B: steps 11-12
+
+Continue here only after finishing Option B step 10 and creating the second
+participant commit:
+
+```text
+fix: aggregate on username.keyword to avoid fielddata on text field
+```
+
+11. Restart uvicorn without `--reload`, run `bash tests/bench.sh`, and compare
+    the three runs. The endpoint should be much faster than the original
+    baseline, but runs 2 and 3 should still not show stable request-cache hits.
+    Do not accept a code-reading guess. Claude must explain the cache behavior
+    from repeated measurements before proposing the final fix.
+
+    The expected diagnosis has two coupled defects:
+
+    - The 30-day `created_at` range inside `compute_org_summary` sits under
+      `bool.must`, which puts it in query context even though it does not need
+      scoring.
+    - The range uses non-rounded `now-30d` and `now`, so the request body keeps
+      changing and cannot settle into a stable request-cache key.
+
+    Either half alone is insufficient: `bool.filter` with non-rounded `now` 
+    still changes the request body, and rounded date math under `bool.must` 
+    still pays query/scoring-context cost for a yes/no constraint.
+
+    Change only the 30-day aggregation search body in
+    `app/routes/dashboard.py`: move the `created_at` range from `bool.must` to
+    `bool.filter`, and change `now-30d` / `now` to `now-30d/d` / `now/d`.
+
+12. Run the participant post-fix checks:
+
+    ```bash
+    pytest -m "not starting_state"
+    ruff check app
+    mypy app
+    ```
+
+    Restart uvicorn without `--reload`, then run:
+
+    ```bash
+    bash tests/bench.sh
+    ```
+
+    Record both cold and cached numbers. The calibration target after fix #3 is
+    `50-150 ms cached / 200-400 ms cold`; local pass/fail is still relative
+    improvement plus timer/cache evidence.
+
+    Fill in the final notes block at the top of `app/routes/dashboard.py` with
+    the before/after evidence for all three fixes.
+
+    The expected third participant commit is:
+
+    ```text
+    fix: move date range to filter context, round now to day for cache hit
+    ```
+
+## Closing Lesson
+
+Prove that hypothesis with data. Run the perf harness, read the instrumentation
+output, tell me which named block dominates wall-clock time, and quote the
+numbers. Only after you have the numbers, propose the fix. Then try to falsify
+your own hypothesis before you accept it.
+
+The Elasticsearch details matter for this workshop, but the habit is portable:
+measure first, change one proven cause, and make the next measurement explain
+what changed.
+
+## Appendix B: Translate To Your World
+
+The prompts are stack-agnostic. The instrumentation changes by stack; the
+discipline does not.
+
+| Workshop primitive (Elasticsearch) | Postgres / SQL | MongoDB | Spark / Trino / dbt |
+|---|---|---|---|
+| `tests/bench.sh` | `pgbench`, query timing, APM percentile widget | `mongostat`, query timing | `EXPLAIN`, Spark UI, dbt run timing |
+| Profile API / slow log | `EXPLAIN ANALYZE`, `auto_explain`, slow query log | `db.system.profile`, `explain("executionStats")` | Spark UI stage view, Trino query plan, dbt `--debug` |
+| Named timer blocks | Sentry, Datadog, or New Relic span names; database span events | APM span names | Spark stage timing, dbt model timing |
+| Mapping-as-config | Indexes, column types, partial indexes | Index definitions, sparse indexes | Partition columns, file format, Z-order columns |
+| Query-vs-filter cache context | Materialized views, query-result caches, prepared-statement plans | `hint()`, index intersection | Result caching layers, broadcast hints, predicate pushdown |
+| Pivot prompt | Identical wording | Identical wording | Identical wording |
+| Falsification prompt | Identical wording | Identical wording | Identical wording |
 
 ## Scope Guardrails
 
 Option A stops after the single measured N+1 fix. Option B steps 9-10 stop
-after the `username.keyword` aggregation fix. Do not add async/await
+after the `username.keyword` aggregation fix; Option B steps 11-12 stop after
+the two-part cache fix and final measurement narrative. Do not add async/await
 refactoring, authentication, frontend work, production deployment steps,
 Elasticsearch cluster operations, reindex strategy drills, vector search, ML
-features, ESQL, or the later cache fix.
+features, ESQL, or any broader cache architecture work.
 
 Facilitators can use `reference/option-a-sample-run.md` when a session needs
 troubleshooting support.
