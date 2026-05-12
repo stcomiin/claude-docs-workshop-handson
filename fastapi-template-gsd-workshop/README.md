@@ -63,7 +63,7 @@ This workshop is forked from `fastapi/full-stack-fastapi-template` at commit `13
    docker compose up --watch
    ```
 
-   First boot pulls images and runs Alembic migrations (~2-3 min).
+   First boot pulls images and runs Alembic migrations (~2-3 min). If pulls fail with a Docker Hub rate-limit error, run `docker login` first — anonymous pulls are limited to 100 per 6h per IP.
 
 4. Open `http://localhost:5173` and log in with the superuser credentials. Confirm the items module renders.
 

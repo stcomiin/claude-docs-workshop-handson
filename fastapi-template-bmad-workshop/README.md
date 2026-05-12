@@ -42,31 +42,44 @@ that filtering works for items with and without categories.
 
 This workshop is forked from `fastapi/full-stack-fastapi-template` at commit `13652b51ea0acca7dfe243ac25e2bbdc066f3c4f` (2026-04-16).
 
-1. Copy `.env` to your local values (the template ships a working `.env` for local dev — edit only what you need):
+1. Edit the template's shipped `.env` for your local values:
    - `PROJECT_NAME` — anything you like
    - `SECRET_KEY` — generate with `python -c "import secrets; print(secrets.token_urlsafe(32))"`
    - `FIRST_SUPERUSER` — your email
    - `FIRST_SUPERUSER_PASSWORD` — a strong password
    - Leave `SMTP_HOST` empty to disable email; mailcatcher is available for local SMTP testing if you want it.
 
-2. Start the stack:
+2. (Optional, only if you cloned this directory standalone outside the parent workshop repo) Initialize git so BMAD has a clean working tree to track:
+
+   ```bash
+   git status --short || (git init && git add . && git commit -m "Workshop starting point at template SHA 13652b51")
+   ```
+
+   If this directory is already inside a git repo, skip this step.
+
+3. Start the stack:
 
    ```bash
    docker compose up --watch
    ```
 
-   First boot pulls images and runs Alembic migrations (~2-3 min).
+   First boot pulls images and runs Alembic migrations (~2-3 min). If pulls fail with a Docker Hub rate-limit error, run `docker login` first — anonymous pulls are limited to 100 per 6h per IP.
 
-3. Open `http://localhost:5173` and log in with the superuser credentials. Confirm the items module renders.
+4. Open `http://localhost:5173` and log in with the superuser credentials. Confirm the items module renders.
 
-4. Baseline checks (record results before any agent work):
+5. Baseline checks (record results before any agent work):
 
    ```bash
+   # Backend (stack must be up)
    docker compose exec backend pytest
-   cd frontend && npm install && npm test && npm run build
+
+   # Frontend static check (does NOT require the stack)
+   cd frontend && npm install && npm run build
    ```
 
-5. Start a fresh Claude Code or Codex session in this directory.
+   The frontend's Playwright E2E suite (`npm test` inside `frontend/`) requires the full Docker stack to be running and is slow. Skip it for the baseline; run it after your feature work if you want end-to-end coverage.
+
+6. Start a fresh Claude Code or Codex session in this directory.
 
 ## Run the workflow
 
