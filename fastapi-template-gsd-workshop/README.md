@@ -47,7 +47,7 @@ This workshop is forked from `fastapi/full-stack-fastapi-template` at commit `13
    - `SECRET_KEY` — generate with `python -c "import secrets; print(secrets.token_urlsafe(32))"`
    - `FIRST_SUPERUSER` — your email
    - `FIRST_SUPERUSER_PASSWORD` — a strong password
-   - Leave `SMTP_HOST` empty to disable email.
+   - Leave `SMTP_HOST` empty to disable email; mailcatcher is available for local SMTP testing if you want it.
 
 2. (Optional, only if you cloned this directory standalone outside the parent workshop repo) Initialize git so GSD has a clean working tree to track:
 
