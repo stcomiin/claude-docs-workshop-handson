@@ -1,10 +1,12 @@
-# Workshop: GSD on a FastAPI template fork
+# GSD workshop: FastAPI full-stack template
 
-This workshop is the runnable substrate for the GSD walkthrough in the central guide:
+This workshop guides you through running GSD on an unfamiliar codebase — `fastapi/full-stack-fastapi-template`. It is a thin guide: you'll clone the template yourself, run GSD against it, and end up with a real fork you can keep iterating on past the workshop.
+
+For curriculum context, see the central guide:
 
 > **Existing Codebase Workflows → Run It Through GSD** — see `claude-docs/content/docs/existing-codebase-workflows.md` (replace with the public deploy URL once available).
 
-Read the central guide first, then come back here for the codebase and the suggested feature.
+Read the central guide first, then come back here for the setup steps and the suggested feature.
 
 ## What you will build
 
@@ -40,22 +42,23 @@ that filtering works for items with and without categories.
 
 ## Setup
 
-This workshop is forked from `fastapi/full-stack-fastapi-template` at commit `13652b51ea0acca7dfe243ac25e2bbdc066f3c4f` (2026-04-16).
+This workshop pins `fastapi/full-stack-fastapi-template` at commit `13652b51ea0acca7dfe243ac25e2bbdc066f3c4f` (2026-04-16) for reproducibility. Skip the `git checkout` step if you want the latest `master` instead.
 
-1. Edit the template's shipped `.env` for your local values:
+1. Clone the template to a working directory of your choice (this directory is just a guide — your real work happens in the clone):
+
+   ```bash
+   git clone https://github.com/fastapi/full-stack-fastapi-template.git fastapi-template-gsd
+   cd fastapi-template-gsd
+   git checkout 13652b51ea0acca7dfe243ac25e2bbdc066f3c4f
+   git checkout -b workshop-gsd   # branch off so your work commits cleanly
+   ```
+
+2. Edit the template's shipped `.env` for your local values:
    - `PROJECT_NAME` — anything you like
    - `SECRET_KEY` — generate with `python -c "import secrets; print(secrets.token_urlsafe(32))"`
    - `FIRST_SUPERUSER` — your email
    - `FIRST_SUPERUSER_PASSWORD` — a strong password
    - Leave `SMTP_HOST` empty to disable email; mailcatcher is available for local SMTP testing if you want it.
-
-2. (Optional, only if you cloned this directory standalone outside the parent workshop repo) Initialize git so GSD has a clean working tree to track:
-
-   ```bash
-   git status --short || (git init && git add . && git commit -m "Workshop starting point at template SHA 13652b51")
-   ```
-
-   If this directory is already inside a git repo, skip this step.
 
 3. Start the stack:
 
@@ -79,7 +82,7 @@ This workshop is forked from `fastapi/full-stack-fastapi-template` at commit `13
 
    The frontend's Playwright E2E suite (`npm test` inside `frontend/`) requires the full Docker stack to be running and is slow. Skip it for the baseline; run it after your feature work if you want end-to-end coverage.
 
-6. Start a fresh Claude Code or Codex session in this directory.
+6. Start a fresh Claude Code or Codex session in the cloned directory (not in this workshop guide directory).
 
 ## Run the workflow
 
