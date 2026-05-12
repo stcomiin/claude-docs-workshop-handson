@@ -54,7 +54,7 @@ Both forks are independent dirs (not branches or overlays) — the user's stated
 
 The README does not mandate the categories feature. It opens with:
 
-> **Suggested feature (you can substitute your own):** Add item categories with a filter on the items list. See [Existing Codebase Workflows → Hands-on Lab](https://claude-docs.devbionics.com/docs/existing-codebase-workflows#hands-on-lab-same-feature-both-workflows) for the full feature description.
+> **Suggested feature (you can substitute your own):** Add item categories with a filter on the items list. See the central guide `existing-codebase-workflows.md`, section "Hands-on Lab: Same Feature, Both Workflows" for the full feature description. (Replace this with the public deploy URL when the workshop README is finalized.)
 >
 > The point of this workshop is to experience the [BMAD / GSD] workflow on the FastAPI template. If you'd rather practice on a different small feature — an item priority, due date, notes field, "favorite" star — go ahead, as long as it stays within the Existing-Codebase Rule below.
 
@@ -136,7 +136,7 @@ Principle: anything not specific to the runnable harness lives in the central gu
 
 ## 8. Setup steps (same in both READMEs)
 
-1. Clone or copy the FastAPI template at the pinned commit into the workshop dir.
+1. Copy the FastAPI template's tracked files at the pinned commit into the workshop dir (everything except `.git/` — the workshop dir lives in the workshop repo, not a separate git history).
 2. Set up `.env` from `.env.example`: project name, DB password, secret key, first-superuser email + password, SMTP off.
 3. `docker compose up --watch` to bring up Postgres, backend, frontend, adminer, mailcatcher.
 4. Wait for DB ready; backend auto-runs Alembic migrations on startup.
@@ -165,10 +165,12 @@ Each step is its own commit so a reviewer can isolate deletions from additions.
 2. **This spec is committed first** at `docs/superpowers/specs/2026-05-12-fastapi-template-workshop-migration-design.md`. (Brainstorming-flow "Write design doc" step — happens before any code changes.)
 3. Commit: delete `fastapi-perf-investigation-workshop/`.
 4. Commit: delete `one-shot-task-dashboard/`.
-5. Commit: empty + repopulate `one-shot-task-dashboard-bmad-workshop/` with the template fork at the pinned SHA, then rename the dir to `fastapi-template-bmad-workshop/`. Add the workshop README.
-6. Commit: same for the GSD workshop dir.
-7. Commit: top-level repo `README.md` listing surviving workshops and linking the central guide.
-8. Commit (follow-up, post-review): delete `docs/` once this spec has served its purpose.
+5. Commit: delete `one-shot-task-dashboard-bmad-workshop/`.
+6. Commit: create `fastapi-template-bmad-workshop/` populated from the template fork at the pinned SHA, plus the workshop README.
+7. Commit: delete `one-shot-task-dashboard-gsd-workshop/`.
+8. Commit: create `fastapi-template-gsd-workshop/` populated from the template fork at the pinned SHA, plus the workshop README.
+9. Commit: top-level repo `README.md` listing surviving workshops and linking the central guide.
+10. Commit (follow-up, post-review): delete `docs/` once this spec has served its purpose.
 
 ## 11. Considered alternatives (and why this one)
 
