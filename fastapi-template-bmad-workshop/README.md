@@ -124,7 +124,15 @@ that filtering works for items with and without categories.
 
 4. Open `http://localhost:5173` and log in with the superuser credentials. Confirm the items module renders.
 
-5. Baseline checks (record results before any agent work):
+5. Seed sample items so the list has something to play with:
+
+   ```bash
+   python seed_items.py
+   ```
+
+   The python script lives in this workshop-handson folder. 
+
+6. Baseline checks (record results before any agent work):
 
    ```bash
    # Backend (stack must be up)
@@ -136,7 +144,7 @@ that filtering works for items with and without categories.
 
    The frontend's Playwright E2E suite (`npm test` inside `frontend/`) requires the full Docker stack to be running and is slow. Skip it for the baseline; run it after your feature work if you want end-to-end coverage.
 
-6. Start a fresh Claude Code or Codex session in the cloned directory (not in this workshop guide directory).
+7. Start a fresh Claude Code or Codex session in the cloned directory (not in this workshop guide directory).
 
 ## Run the workflow
 
