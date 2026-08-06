@@ -1,6 +1,6 @@
 # BMAD Method workshop: FastAPI full-stack template
 
-This workshop guides you through running the BMAD Method on an unfamiliar codebase — `fastapi/full-stack-fastapi-template`. It is a thin guide: you'll clone the template yourself, run BMAD against it, and end up with a real fork you can keep iterating on past the workshop.
+This workshop guides you through running the BMAD Method on an unfamiliar codebase — [fastapi/full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template). It is a thin guide: you'll clone the template yourself, run BMAD against it, and end up with a real fork you can keep iterating on past the workshop.
 
 For curriculum context, see the central guide:
 

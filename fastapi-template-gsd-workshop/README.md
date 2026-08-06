@@ -1,6 +1,6 @@
 # GSD workshop: FastAPI full-stack template
 
-This workshop guides you through running GSD on an unfamiliar codebase — `fastapi/full-stack-fastapi-template`. It is a thin guide: you'll clone the template yourself, run GSD against it, and end up with a real fork you can keep iterating after the workshop.
+This workshop guides you through running GSD on an unfamiliar codebase — [fastapi/full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template). It is a thin guide: you'll clone the template yourself, run GSD against it, and end up with a real fork you can keep iterating after the workshop.
 
 ## What you will build
 
